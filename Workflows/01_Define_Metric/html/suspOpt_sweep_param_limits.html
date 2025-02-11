@@ -1,0 +1,687 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>Create Virtual Test with Performance Metrics</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2025-02-07">
+<meta name="DC.source" content="suspOpt_sweep_param_limits.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>Create Virtual Test with Performance Metrics</h1>
+<!--introduction-->
+<p>This example individually tests the vehicle model with one parameter value set to one of its range limits. This simple sweep ensures that</p>
+<div>
+<ul>
+<li>Parameter values are modified in parallel simulations without recompiling</li>
+<li>Tests at parameter limits do not result in invalid tests (locked wheels, etc.)</li>
+<li>Performance metrics are calculated properly</li>
+</ul>
+</div>
+<p>A simple measure of the sensitivity to each metric is calculated by measuring the percent change in the performance metric as the parameter value is set to its limits. A more robust evaluation of the performance metric would require a design of experiments to test a distribution of the parameters.</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_Workflow_Define_Metrics.png" alt=""> </p>
+<p>The code used to create this documentation is here: <a href="matlab:edit('suspOpt_sweep_param_limits.m');">suspOpt_sweep_param_limits.m</a>
+</p>
+<p>(<a href="matlab:web('Vehicle_Design_Opt_with_AI_Overview.html')">return to Optimizing Vehicle Design Using AI and Simscape Overview</a>)</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Open Vehicle Model</a>
+</li>
+<li>
+<a href="#3">Generate Table of Design Parameters</a>
+</li>
+<li>
+<a href="#4">Create Simulation Input Objects to Test Range Limits</a>
+</li>
+<li>
+<a href="#5">Run Simulations Using Parallel Computing</a>
+</li>
+<li>
+<a href="#6">Check Run Validity</a>
+</li>
+<li>
+<a href="#7">Extract Performance Metrics</a>
+</li>
+<li>
+<a href="#9">Identify Sensitive Values Based on Variance Threshold</a>
+</li>
+<li>
+<a href="#10">Identify Top 10 Parameters Based on Variance Only</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Open Vehicle Model</h2>
+<p>Open model and load default parameters. The vehicle model is set up to perform a test in three stages.</p>
+<div>
+<ol>
+<li>
+<b>Ride over a bump</b> and measure ride comfort</li>
+<li>
+<b>Complete a double-lane change maneuver (ISO 3888)</b> and measure stability</li>
+<li>
+<b>Brake to a stop</b> and measure braking distance</li>
+</ol>
+</div>
+<p>For each stage, a performance metric is calculated. In the plots below you can see the changes in body pitch and roll angle as it passes over the bump and through the double-lane change. The wheel speeds show the steering and braking during the maneuver.</p>
+<p>
+<a href="matlab:open_system('sm_car_dlc_only');">Open Model</a>
+</p>
+<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_01.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_03.png" alt=""> <h2 id="3">Generate Table of Design Parameters</h2>
+<p>Adjusting the design requires selecting a set of design parameters to tune and setting ranges for those values. That set is defined in a table. For each parameter we specify:</p>
+<div>
+<ol>
+<li>
+<b>Label</b>: A short character string to identify the parameter</li>
+<li>
+<b>Parameter</b>: Location in a MATLAB structure where the parameter is defined</li>
+<li>
+<b>Index</b>: Index of the value within the structure field</li>
+<li>
+<b>Use</b>: Indicator if the parameter should be tuned (true/false). Set to "true" until a senstivity analysis has been performed.</li>
+<li>
+<b>Min</b>: Minimum value for parameter range</li>
+<li>
+<b>Max</b>: Maximum value for parameter range</li>
+<li>
+<b>Default</b>: Default value for parameter</li>
+</ol>
+</div>
+<pre class="codeoutput">
+parTableVal =
+
+  94&times;7 table
+
+          Label                                     Parameter                                Index     Use        Min          Max        Default 
+    _________________    ________________________________________________________________    _____    _____    _________    _________    _________
+
+    {'HP_A1_UA_inFx'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardF.Value'}      1      true          0.05         0.15          0.1
+    {'HP_A1_UA_inFy'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardF.Value'}      2      true         0.401        0.501        0.451
+    {'HP_A1_UA_inFz'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardF.Value'}      3      true          0.38         0.48         0.43
+    {'HP_A1_UA_inRx'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardR.Value'}      1      true        -0.155       -0.055       -0.105
+    {'HP_A1_UA_inRy'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardR.Value'}      2      true         0.401        0.501        0.451
+    {'HP_A1_UA_inRz'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardR.Value'}      3      true          0.36         0.46         0.41
+    {'HP_A1_UA_Outx'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sOutboard.Value'}      1      true         -0.09         0.01        -0.04
+    {'HP_A1_UA_Outy'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sOutboard.Value'}      2      true        0.6372       0.7372       0.6872
+    {'HP_A1_UA_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sOutboard.Value'}      3      true           0.4          0.5         0.45
+    {'HP_A1_LA_inFx'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardF.Value'}      1      true         0.175        0.275        0.225
+    {'HP_A1_LA_inFy'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardF.Value'}      2      true         0.256        0.356        0.306
+    {'HP_A1_LA_inFz'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardF.Value'}      3      true           0.1          0.2         0.15
+    {'HP_A1_LA_inRx'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardR.Value'}      1      true        -0.175       -0.075       -0.125
+    {'HP_A1_LA_inRy'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardR.Value'}      2      true         0.256        0.356        0.306
+    {'HP_A1_LA_inRz'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardR.Value'}      3      true          0.12          0.2         0.15
+    {'HP_A1_LA_Outx'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sOutboard.Value'}      1      true        -0.035        0.065        0.015
+    {'HP_A1_LA_Outy'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sOutboard.Value'}      2      true         0.716        0.816        0.766
+    {'HP_A1_LA_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sOutboard.Value'}      3      true           0.1          0.2         0.15
+    {'HP_A1_Ro_Inbx'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sInboard.Value'      }      1      true       0.08708      0.18708      0.13708
+    {'HP_A1_Ro_Inby'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sInboard.Value'      }      2      true         0.389        0.489        0.439
+    {'HP_A1_Ro_Inbz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sInboard.Value'      }      3      true         0.175        0.235        0.205
+    {'HP_A1_Ro_Outx'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sOutboard.Value'     }      1      true       0.09208      0.19208      0.14208
+    {'HP_A1_Ro_Outy'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sOutboard.Value'     }      2      true         0.739        0.839        0.789
+    {'HP_A1_Ro_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sOutboard.Value'     }      3      true         0.155        0.235        0.185
+    {'HP_A1_Sh_Topx'}    {'Vehicle.Chassis.SuspA1.Linkage.Shock.sTop.Value'             }      1      true     -0.000217     0.099783     0.049783
+    {'HP_A1_Sh_Topy'}    {'Vehicle.Chassis.SuspA1.Linkage.Shock.sTop.Value'             }      2      true       0.44199      0.54199      0.49199
+    {'HP_A1_Sh_Topz'}    {'Vehicle.Chassis.SuspA1.Linkage.Shock.sTop.Value'             }      3      true       0.47586      0.57586      0.52586
+    {'HP_A1_Sh_Botx'}    {'Vehicle.Chassis.SuspA1.Linkage.Shock.sBottom.Value'          }      1      true      0.019783     0.079783     0.049783
+    {'HP_A1_Sh_Boty'}    {'Vehicle.Chassis.SuspA1.Linkage.Shock.sBottom.Value'          }      2      true         0.686        0.746        0.716
+    {'HP_A1_Sh_Botz'}    {'Vehicle.Chassis.SuspA1.Linkage.Shock.sBottom.Value'          }      3      true          0.12         0.18         0.15
+    {'HP_A1_Up_CGrx'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sCG.Value'            }      1      true         -0.02         0.02            0
+    {'HP_A1_Up_CGry'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sCG.Value'            }      2      true          0.71         0.75         0.73
+    {'HP_A1_Up_CGrz'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sCG.Value'            }      3      true          0.31         0.35         0.33
+    {'HP_A1_Up_WCtx'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sWheelCentre.Value'   }      1      true         -0.05         0.05            0
+    {'HP_A1_Up_WCty'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sWheelCentre.Value'   }      2      true        0.7375       0.8375       0.7875
+    {'HP_A1_Up_WCtz'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sWheelCentre.Value'   }      3      true          0.28         0.38         0.33
+    {'HP_A1_AR_Inbx'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sInboard.Value'           }      1      true         -0.35        -0.25         -0.3
+    {'HP_A1_AR_Inby'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sInboard.Value'           }      2      true          0.53         0.63         0.58
+    {'HP_A1_AR_Inbz'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sInboard.Value'           }      3      true           0.1          0.2         0.15
+    {'HP_A1_AR_Outx'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sOutboard.Value'          }      1      true          -0.1            0        -0.05
+    {'HP_A1_AR_Outy'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sOutboard.Value'          }      2      true          0.55         0.65          0.6
+    {'HP_A1_AR_Outz'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sOutboard.Value'          }      3      true           0.2          0.3         0.25
+    {'Da_A1_Da_damp'}    {'Vehicle.Chassis.Damper.Axle1.Damping.d.Value'                }      1      true          4000         7600         5500
+    {'Da_A1_En_xMin'}    {'Vehicle.Chassis.Damper.Axle1.Endstop.xMin.Value'             }      1      true       -0.0875       -0.085       -0.086
+    {'Da_A1_En_xMax'}    {'Vehicle.Chassis.Damper.Axle1.Endstop.xMax.Value'             }      1      true        0.0625        0.065        0.064
+    {'Sp_A1_Sp_Stif'}    {'Vehicle.Chassis.Spring.Axle1.K.Value'                        }      1      true         46000        58000        52000
+    {'Ar_A1_AR_Stif'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.k.Value'                  }      1      true            22           38           30
+    {'HP_A2_UA_inFx'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardF.Value'}      1      true          0.05         0.15          0.1
+    {'HP_A2_UA_inFy'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardF.Value'}      2      true         0.401        0.501        0.451
+    {'HP_A2_UA_inFz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardF.Value'}      3      true          0.37         0.47         0.42
+    {'HP_A2_UA_inRx'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardR.Value'}      1      true        -0.155       -0.055       -0.105
+    {'HP_A2_UA_inRy'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardR.Value'}      2      true         0.401        0.501        0.451
+    {'HP_A2_UA_inRz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardR.Value'}      3      true          0.37         0.47         0.42
+    {'HP_A2_UA_Outx'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      1      true         -0.05         0.05            0
+    {'HP_A2_UA_Outy'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      2      true         0.656        0.756        0.706
+    {'HP_A2_UA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      3      true           0.4          0.5         0.45
+    {'HP_A2_LA_inFx'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardF.Value'}      1      true         0.175        0.275        0.225
+    {'HP_A2_LA_inFy'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardF.Value'}      2      true         0.256        0.356        0.306
+    {'HP_A2_LA_inFz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardF.Value'}      3      true         0.138        0.238        0.188
+    {'HP_A2_LA_inRx'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardR.Value'}      1      true        -0.175       -0.075       -0.125
+    {'HP_A2_LA_inRy'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardR.Value'}      2      true         0.256        0.356        0.306
+    {'HP_A2_LA_inRz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardR.Value'}      3      true           0.1          0.2         0.15
+    {'HP_A2_LA_Outx'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      1      true         -0.05         0.05            0
+    {'HP_A2_LA_Outy'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      2      true         0.656        0.756        0.706
+    {'HP_A2_LA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      3      true           0.1          0.2         0.15
+    {'HP_A2_Ro_Inbx'}    {'Vehicle.Chassis.SuspA2.Linkage.TrackRod.sInboard.Value'      }      1      true         -0.18        -0.08        -0.13
+    {'HP_A2_Ro_Inby'}    {'Vehicle.Chassis.SuspA2.Linkage.TrackRod.sInboard.Value'      }      2      true         0.359        0.459        0.409
+    {'HP_A2_Ro_Inbz'}    {'Vehicle.Chassis.SuspA2.Linkage.TrackRod.sInboard.Value'      }      3      true         0.155        0.215        0.185
+    {'HP_A2_Ro_Outx'}    {'Vehicle.Chassis.SuspA2.Linkage.TrackRod.sOutboard.Value'     }      1      true         -0.15        -0.11        -0.13
+    {'HP_A2_Ro_Outy'}    {'Vehicle.Chassis.SuspA2.Linkage.TrackRod.sOutboard.Value'     }      2      true         0.739        0.779        0.759
+    {'HP_A2_Ro_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.TrackRod.sOutboard.Value'     }      3      true         0.155        0.205        0.185
+    {'HP_A2_Sh_Topx'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sTop.Value'             }      1      true      -0.10387     -0.00387     -0.05387
+    {'HP_A2_Sh_Topy'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sTop.Value'             }      2      true       0.44195      0.54195      0.49195
+    {'HP_A2_Sh_Topz'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sTop.Value'             }      3      true       0.47286      0.57286      0.52286
+    {'HP_A2_Sh_Botx'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sBottom.Value'          }      1      true     -0.083587    -0.023587    -0.053587
+    {'HP_A2_Sh_Boty'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sBottom.Value'          }      2      true         0.686        0.746        0.716
+    {'HP_A2_Sh_Botz'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sBottom.Value'          }      3      true          0.12         0.18         0.15
+    {'HP_A2_Up_CGrx'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sCG.Value'            }      1      true         -0.02         0.02            0
+    {'HP_A2_Up_CGry'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sCG.Value'            }      2      true          0.72         0.76         0.74
+    {'HP_A2_Up_CGrz'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sCG.Value'            }      3      true          0.31         0.35         0.33
+    {'HP_A2_Up_WCtx'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sWheelCentre.Value'   }      1      true         -0.05         0.05            0
+    {'HP_A2_Up_WCty'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sWheelCentre.Value'   }      2      true        0.7375       0.8375       0.7875
+    {'HP_A2_Up_WCtz'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sWheelCentre.Value'   }      3      true          0.28         0.38         0.33
+    {'HP_A2_AR_Inbx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sInboard.Value'           }      1      true          0.25         0.35          0.3
+    {'HP_A2_AR_Inby'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sInboard.Value'           }      2      true          0.53         0.63         0.58
+    {'HP_A2_AR_Inbz'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sInboard.Value'           }      3      true           0.1          0.2         0.15
+    {'HP_A2_AR_Outx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      1      true             0          0.1         0.05
+    {'HP_A2_AR_Outy'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      2      true          0.55         0.65          0.6
+    {'HP_A2_AR_Outz'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      3      true           0.2          0.3         0.25
+    {'Da_A2_Da_damp'}    {'Vehicle.Chassis.Damper.Axle2.Damping.d.Value'                }      1      true          4000         7600         5500
+    {'Da_A2_En_xMin'}    {'Vehicle.Chassis.Damper.Axle2.Endstop.xMin.Value'             }      1      true       -0.0875       -0.085       -0.086
+    {'Da_A2_En_xMax'}    {'Vehicle.Chassis.Damper.Axle2.Endstop.xMax.Value'             }      1      true        0.0625        0.065        0.064
+    {'Sp_A2_Sp_Stif'}    {'Vehicle.Chassis.Spring.Axle2.K.Value'                        }      1      true         46000        58000        52000
+    {'Ar_A2_AR_Stif'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.k.Value'                  }      1      true            40           60           50
+
+</pre>
+<h2 id="4">Create Simulation Input Objects to Test Range Limits</h2>
+<p>A suite of tests is defined using the table above. For each test, all parameters set to the default value and one parameter set to either of its range limits. The tests are created using a SimulationInput object so that the tests can be performed in series or parallel without modifying the original model. Parameter value changes and any model parameter setting overrides are applied temporarily during the test using the SimulationInput object.</p>
+<pre class="codeoutput">
+simInputFR = 
+
+  1&times;188 SimulationInput array with properties:
+
+    ModelName
+    InitialState
+    ExternalInput
+    ModelParameters
+    BlockParameters
+    Variables
+    PreSimFcn
+    PostSimFcn
+    UserString
+    VariantConfiguration
+
+</pre>
+<h2 id="5">Run Simulations Using Parallel Computing</h2>
+<p>Using the parsim() command, the suite of tests is executed in parallel on multiple workers. Using Fast Restart, the model is only compiled once per worker. Because we have defined the design parameters as run-time parameters, we can modify their values even within the compiled model. This dramatically shortens the time it takes to execute the sweep.</p>
+<p>Progress is reported using the Simulation Manager. We can see if any warnings or errors have occurred during any of the tests and see how long each run has taken.</p>
+<pre class="codeoutput">Starting parallel pool (parpool) using the 'Processes' profile ...
+Connected to parallel pool with 4 workers.
+188 simulations completed in 745.5389 seconds.
+</pre>
+<h2 id="6">Check Run Validity</h2>
+<p>The outputs of the test sweep are checked to make sure the runs are all valid. A test run is deemed invalid if any of the following thresholds are exceeded for an unacceptable period of time:</p>
+<div>
+<ol>
+<li>The <b>toe angle</b> of either front wheel.</li>
+<li>The <b>lateral deviation</b> of the vehicle from the target path.</li>
+<li>The <b>wheel speed deviation</b> measured as difference in wheel tangential velocity and chassis speed.</li>
+</ol>
+</div>
+<p>Plot show the values of the measurements for all the runs, and a count of the valid runs is displayed. If any run is invalid, we may need to reconsider our parameter ranges.</p>
+<pre class="codeoutput">Number of valid runs: 188
+</pre>
+<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_04.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_06.png" alt=""> <h2 id="7">Extract Performance Metrics</h2>
+<p>For all runs, performance metrics are calculated.</p>
+<div>
+<ol>
+<li>
+<b>Ride Comfort</b>: The magnitude of the vertical acceleration, roll acceleration, and pitch acceleration of the vehicle body is integrated during the period of time the vehicle passes over a bump. Larger values indicates worse ride comfort.</li>
+<li>
+<b>Roll Stability</b>: The L2 norm of the roll angle is calculated during the period of time the vehicle is in the double lane change maneuver. Larger values indicate worse vehicle stability.</li>
+<li>
+<b>Vehicle Safety</b>: The braking distance at the end of the test is measured. Longer braking distance indicates worse safety.</li>
+</ol>
+</div>
+<p>The impact of the parameters on the performance metric are plotted. The plot shows (Metric with parameter at max value - Metric with parameter at min value)/(maximum observed performance metric value).</p>
+<p>This simple measure indicates how sensitive the metric is to the parameter value. A more rigorous sensitivity analysis should be performed to truly determine parameter sensitivity. The plots show that the design parameters have a relatively small impact on the braking distance.</p>
+<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_07.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_08.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_09.png" alt=""> <h2 id="9">Identify Sensitive Values Based on Variance Threshold</h2>
+<p>Based on the above result, we can see many parameters have a relatively small impact on the performance metrics. To limit the design space, we pick the parameters with the largest impact on the ride comfort and roll stability metrics and combine them into a single list.</p>
+<pre class="codeoutput">
+ans =
+
+  35&times;7 table
+
+          Label                                     Parameter                                Index     Use       Min        Max      Default
+    _________________    ________________________________________________________________    _____    _____    _______    _______    _______
+
+    {'Ar_A1_AR_Stif'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.k.Value'                  }      1      true          22         38         30
+    {'Ar_A2_AR_Stif'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.k.Value'                  }      1      true          40         60         50
+    {'Da_A2_Da_damp'}    {'Vehicle.Chassis.Damper.Axle2.Damping.d.Value'                }      1      true        4000       7600       5500
+    {'HP_A1_AR_Inbx'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sInboard.Value'           }      1      true       -0.35      -0.25       -0.3
+    {'HP_A1_AR_Outx'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sOutboard.Value'          }      1      true        -0.1          0      -0.05
+    {'HP_A1_AR_Outy'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sOutboard.Value'          }      2      true        0.55       0.65        0.6
+    {'HP_A1_LA_Outx'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sOutboard.Value'}      1      true      -0.035      0.065      0.015
+    {'HP_A1_LA_Outy'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sOutboard.Value'}      2      true       0.716      0.816      0.766
+    {'HP_A1_LA_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sOutboard.Value'}      3      true         0.1        0.2       0.15
+    {'HP_A1_LA_inFz'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardF.Value'}      3      true         0.1        0.2       0.15
+    {'HP_A1_LA_inRy'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardR.Value'}      2      true       0.256      0.356      0.306
+    {'HP_A1_LA_inRz'}    {'Vehicle.Chassis.SuspA1.Linkage.LowerWishbone.sInboardR.Value'}      3      true        0.12        0.2       0.15
+    {'HP_A1_Ro_Inbz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sInboard.Value'      }      3      true       0.175      0.235      0.205
+    {'HP_A1_Ro_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sOutboard.Value'     }      3      true       0.155      0.235      0.185
+    {'HP_A1_UA_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sOutboard.Value'}      3      true         0.4        0.5       0.45
+    {'HP_A1_UA_inFz'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardF.Value'}      3      true        0.38       0.48       0.43
+    {'HP_A1_UA_inRz'}    {'Vehicle.Chassis.SuspA1.Linkage.UpperWishbone.sInboardR.Value'}      3      true        0.36       0.46       0.41
+    {'HP_A1_Up_WCty'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sWheelCentre.Value'   }      2      true      0.7375     0.8375     0.7875
+    {'HP_A1_Up_WCtz'}    {'Vehicle.Chassis.SuspA1.Linkage.Upright.sWheelCentre.Value'   }      3      true        0.28       0.38       0.33
+    {'HP_A2_AR_Inbx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sInboard.Value'           }      1      true        0.25       0.35        0.3
+    {'HP_A2_AR_Outx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      1      true           0        0.1       0.05
+    {'HP_A2_AR_Outy'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      2      true        0.55       0.65        0.6
+    {'HP_A2_LA_Outx'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      1      true       -0.05       0.05          0
+    {'HP_A2_LA_Outy'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      2      true       0.656      0.756      0.706
+    {'HP_A2_LA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      3      true         0.1        0.2       0.15
+    {'HP_A2_LA_inFz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardF.Value'}      3      true       0.138      0.238      0.188
+    {'HP_A2_LA_inRz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardR.Value'}      3      true         0.1        0.2       0.15
+    {'HP_A2_Sh_Boty'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sBottom.Value'          }      2      true       0.686      0.746      0.716
+    {'HP_A2_Sh_Topy'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sTop.Value'             }      2      true     0.44195    0.54195    0.49195
+    {'HP_A2_Sh_Topz'}    {'Vehicle.Chassis.SuspA2.Linkage.Shock.sTop.Value'             }      3      true     0.47286    0.57286    0.52286
+    {'HP_A2_UA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      3      true         0.4        0.5       0.45
+    {'HP_A2_UA_inFz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardF.Value'}      3      true        0.37       0.47       0.42
+    {'HP_A2_UA_inRz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sInboardR.Value'}      3      true        0.37       0.47       0.42
+    {'HP_A2_Up_WCty'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sWheelCentre.Value'   }      2      true      0.7375     0.8375     0.7875
+    {'HP_A2_Up_WCtz'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sWheelCentre.Value'   }      3      true        0.28       0.38       0.33
+
+</pre>
+<h2 id="10">Identify Top 10 Parameters Based on Variance Only</h2>
+<p>That list is then trimmed to a list of the 10 parameters for the remainder of our design space investigation. Working with only 10 parameters accelerates the process of exploring the design workflow.</p>
+<pre class="codeoutput">
+ans =
+
+  10&times;7 table
+
+          Label                                     Parameter                                Index     Use      Min      Max     Default
+    _________________    ________________________________________________________________    _____    _____    _____    _____    _______
+
+    {'HP_A1_AR_Inbx'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sInboard.Value'           }      1      true     -0.35    -0.25      -0.3 
+    {'HP_A1_Ro_Inbz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sInboard.Value'      }      3      true     0.175    0.235     0.205 
+    {'HP_A1_Ro_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sOutboard.Value'     }      3      true     0.155    0.235     0.185 
+    {'HP_A2_AR_Inbx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sInboard.Value'           }      1      true      0.25     0.35       0.3 
+    {'HP_A2_AR_Outx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      1      true         0      0.1      0.05 
+    {'HP_A2_AR_Outy'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      2      true      0.55     0.65       0.6 
+    {'HP_A2_LA_Outy'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      2      true     0.656    0.756     0.706 
+    {'HP_A2_LA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      3      true       0.1      0.2      0.15 
+    {'HP_A2_LA_inRz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardR.Value'}      3      true       0.1      0.2      0.15 
+    {'HP_A2_UA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      3      true       0.4      0.5      0.45 
+
+</pre>
+<p class="footer">Copyright 2023-2024 The MathWorks, Inc.<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% Create Virtual Test with Performance Metrics 
+%
+% This example individually tests the vehicle model with one parameter
+% value set to one of its range limits. This simple sweep ensures that
+%
+% * Parameter values are modified in parallel simulations without recompiling
+% * Tests at parameter limits do not result in invalid tests (locked wheels, etc.)
+% * Performance metrics are calculated properly
+% 
+% A simple measure of the sensitivity to each metric is calculated by
+% measuring the percent change in the performance metric as the parameter
+% value is set to its limits.  A more robust evaluation of the performance
+% metric would require a design of experiments to test a distribution of
+% the parameters.
+%
+% <<suspOpt_Workflow_Define_Metrics.png>>
+%
+% The code used to create this documentation is here: <matlab:edit('suspOpt_sweep_param_limits.m'); suspOpt_sweep_param_limits.m>
+%
+% (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
+%
+% Copyright 2023-2024 The MathWorks, Inc.
+
+%% Open Vehicle Model
+%
+% Open model and load default parameters.  The vehicle model is set up to
+% perform a test in three stages.  
+%
+% # *Ride over a bump* and measure ride comfort
+% # *Complete a double-lane change maneuver (ISO 3888)* and measure stability
+% # *Brake to a stop* and measure braking distance
+%
+% For each stage, a performance metric is calculated. In the plots below
+% you can see the changes in body pitch and roll angle as it passes over
+% the bump and through the double-lane change.  The wheel speeds show the
+% steering and braking during the maneuver.
+%
+% <matlab:open_system('sm_car_dlc_only'); Open Model>
+
+setup_sm_car_model
+
+%%
+
+out = sim(mdl);
+logsout_sm_car = out.logsout_sm_car;
+sm_car_plot2whlspeed
+sm_car_plot5bodymeas
+
+%% Generate Table of Design Parameters
+%
+% Adjusting the design requires selecting a set of design parameters to
+% tune and setting ranges for those values. That set is defined in a table.
+% For each parameter we specify:
+%
+% # *Label*: A short character string to identify the parameter
+% # *Parameter*: Location in a MATLAB structure where the parameter is
+% defined
+% # *Index*: Index of the value within the structure field
+% # *Use*: Indicator if the parameter should be tuned (true/false). Set to
+% "true" until a senstivity analysis has been performed.
+% # *Min*: Minimum value for parameter range
+% # *Max*: Maximum value for parameter range
+% # *Default*: Default value for parameter
+
+% Create table with *relative* min and max for HPs, min and max for scalars
+parTableRel = suspOpt_param_rangeRelative;
+
+% Convert table to have min and max for all values
+% Suitable for DOE and sensitivity analysis
+parTableVal = suspOpt_param_rangeAbsolute(parTableRel);
+
+% NOTE - In addition to ranges, two parameter constraints should be applied
+%        to avoid excessive bump steer
+% 1. HP_A1_Ro_Inbz - HP_A1_Ro_Outz >= -0.05
+% 2. HP_A1_Ro_Inbz - HP_A1_Ro_Outz <=  0.04
+
+parTableVal
+
+%% Create Simulation Input Objects to Test Range Limits
+%
+% A suite of tests is defined using the table above. For each test, all
+% parameters set to the default value and one parameter set to either of
+% its range limits.  The tests are created using a SimulationInput object
+% so that the tests can be performed in series or parallel without
+% modifying the original model. Parameter value changes and any model
+% parameter setting overrides are applied temporarily during the test using
+% the SimulationInput object.
+
+% Count number of runs
+numFRTests = sum(parTableVal.Use)*2;
+
+% Create empty simulation input objects
+clear simInputFR
+simInputFR(1:numFRTests) = Simulink.SimulationInput(mdl);
+
+% Initialize indices
+inpFRInd = 0;
+
+% Loop over all parameters
+% Steps of 2 as each row contains min and max
+for p_i = 2:2:numFRTests
+
+    % Load default data structure
+    Vehicle_data;
+    % Check default data structure
+    Vehicle_def = sm_car_vehcfg_checkConfig(Vehicle);
+
+    % Take MINIMUM value of parameter from current row in table 
+    % and overwrite field in default Vehicle structure 
+    Vehicle = suspOpt_param_assign(parTableVal,p_i/2,parTableVal.Min(p_i/2),Vehicle_def);
+
+    % To simplify post-processing, create a label for each run
+    UserString_SimInput = [parTableVal.Label{p_i/2} ' ' num2str(parTableVal.Min(p_i/2))];
+    %disp(UserString_SimInput);
+
+    % Set parameter value in odd Simulation Input object (parameter, min value)
+    simInputFR(p_i-1) =       setVariable(simInputFR(p_i-1),'Vehicle',Vehicle);
+    simInputFR(p_i-1) = setModelParameter(simInputFR(p_i-1),SimMechanicsOpenEditorOnUpdate="off");
+    simInputFR(p_i-1) = setModelParameter(simInputFR(p_i-1),SimscapeLogType="None");
+    simInputFR(p_i-1).UserString = UserString_SimInput;
+
+    % Take MAXIMUM value of parameter from current row in table 
+    % and overwrite field in default Vehicle structure 
+    Vehicle = suspOpt_param_assign(parTableVal,p_i/2,parTableVal.Max(p_i/2),Vehicle_def);
+
+    % To simplify post-processing, create a label for each run
+    UserString_SimInput = [parTableVal.Label{p_i/2} ' ' num2str(parTableVal.Max(p_i/2))];
+    %disp(UserString_SimInput);
+
+    % Set parameter value in even Simulation Input object (parameter, max value)
+    simInputFR(p_i) =       setVariable(simInputFR(p_i),'Vehicle',Vehicle);
+    simInputFR(p_i) = setModelParameter(simInputFR(p_i),SimMechanicsOpenEditorOnUpdate="off");
+    simInputFR(p_i) = setModelParameter(simInputFR(p_i),SimscapeLogType="None");
+    simInputFR(p_i).UserString = UserString_SimInput;
+end
+
+simInputFR
+
+%% Run Simulations Using Parallel Computing
+% 
+% Using the parsim() command, the suite of tests is executed in parallel on
+% multiple workers.  Using Fast Restart, the model is only compiled once
+% per worker.  Because we have defined the design parameters as run-time
+% parameters, we can modify their values even within the compiled model.
+% This dramatically shortens the time it takes to execute the sweep.
+%
+% Progress is reported using the Simulation Manager. We can see if any
+% warnings or errors have occurred during any of the tests and see how long
+% each run has taken.
+
+timerValFR = tic;
+clear simOutFR
+
+% Run with with FastRestart ON, parallel ON
+simOutFR = parsim(simInputFR,'ShowSimulationManager','on', ...
+    'UseFastRestart','on','ShowProgress','off', ...
+    'TransferBaseWorkspaceVariables','on');
+Elapsed_Time_Time_FR  = toc(timerValFR);
+disp([num2str(length(simOutFR)) ' simulations completed in ' num2str(Elapsed_Time_Time_FR) ' seconds.'])
+
+%% Check Run Validity
+%
+% The outputs of the test sweep are checked to make sure the runs are all
+% valid.  A test run is deemed invalid if any of the following thresholds are
+% exceeded for an unacceptable period of time:
+%
+% # The *toe angle* of either front wheel.
+% # The *lateral deviation* of the vehicle from the target path.
+% # The *wheel speed deviation* measured as difference in wheel tangential velocity and chassis speed.
+%
+% Plot show the values of the measurements for all the runs, and a count of
+% the valid runs is displayed.  If any run is invalid, we may need to
+% reconsider our parameter ranges.
+
+dataValidCheck  = suspOpt_check_runValid(parTableVal,simOutFR,Vehicle,true,true);
+validaToe = [dataValidCheck.valid_aToe];
+validyPth = [dataValidCheck.valid_yPth];
+validwSpd = [dataValidCheck.valid_wSpd];
+
+check_2 = union(find([dataValidCheck.valid_aToe]),find([dataValidCheck.valid_yPth]));
+check_3 = union(check_2,find([dataValidCheck.valid_wSpd]));
+
+disp(['Number of valid runs: ' num2str(length(check_3))])
+
+%% Extract Performance Metrics
+%
+% For all runs, performance metrics are calculated.
+%
+% # *Ride Comfort*: The magnitude of the vertical acceleration, roll
+% acceleration, and pitch acceleration of the vehicle body is integrated
+% during the period of time the vehicle passes over a bump. Larger values
+% indicates worse ride comfort.
+% # *Roll Stability*: The L2 norm of the roll angle is calculated during
+% the period of time the vehicle is in the double lane change maneuver.
+% Larger values indicate worse vehicle stability.
+% # *Vehicle Safety*: The braking distance at the end of the test is
+% measured.  Longer braking distance indicates worse safety.
+%
+% The impact of the parameters on the performance metric are plotted.  The
+% plot shows (Metric with parameter at max value - Metric with parameter at
+% min value)/(maximum observed performance metric value).
+%
+% This simple measure indicates how sensitive the metric is to the
+% parameter value.  A more rigorous sensitivity analysis should be
+% performed to truly determine parameter sensitivity. The plots show that
+% the design parameters have a relatively small impact on the braking
+% distance.
+
+perfMetrics = suspOpt_calc_perf_metric(simOutFR,true);
+
+%%
+
+% Write to table, save to file
+minVal = [];
+maxVal = [];
+for i = 1:2:size(simInputFR,2)
+    labelStrsMin = strsplit(simInputFR(i).UserString,' ');
+    labelStrsMax = strsplit(simInputFR(i+1).UserString,' ');
+    varLabelStr{(i+1)/2} = labelStrsMin{1};
+    minVal((i+1)/2)      = str2num(labelStrsMin{2});
+    maxVal((i+1)/2)      = str2num(labelStrsMax{2});
+end
+
+RangeSweepResTable = table(...
+    varLabelStr',...
+    parTableVal.Parameter,...
+    parTableVal.Index,...
+    minVal',...
+    maxVal',...
+    perfMetrics.RollMetric(1:2:end),...
+    perfMetrics.RollMetric(2:2:end),...
+    abs(perfMetrics.RollMetric(1:2:end)-perfMetrics.RollMetric(2:2:end)), ...
+    perfMetrics.BrakMetric(1:2:end),...
+    perfMetrics.BrakMetric(2:2:end),...
+    abs(perfMetrics.BrakMetric(1:2:end)-perfMetrics.BrakMetric(2:2:end)), ...
+    perfMetrics.RideMetric(1:2:end),...
+    perfMetrics.RideMetric(2:2:end),...
+    abs(perfMetrics.RideMetric(1:2:end)-perfMetrics.RideMetric(2:2:end)), ...
+    validwSpd(1:2:end)',...
+    validwSpd(2:2:end)',...
+    validaToe(1:2:end)',...
+    validaToe(2:2:end)',...
+    validyPth(1:2:end)',...
+    validyPth(2:2:end)',...
+    ...
+    'VariableNames',["Label","Variable Name","Index","Min","Max","RollMn","RollMx","DiffRoll","BrakMn","BrakMx","DiffBrak","RideMn","RideMx","DiffRide" + ...
+    "","wSpdMn","wSpdMx","aToeMn","aToeMx","yPthMn","yPthMx"]);
+
+writetable(RangeSweepResTable,'suspOpt_sweep_param_limits_results.xlsx');
+
+% Save results of sweep to MAT file
+save RangeSweepResTable RangeSweepResTable
+
+% Plot Variance
+
+suspOpt_sweep_param_limits_plotVariance(RangeSweepResTable)
+
+%% Identify Sensitive Values Based on Variance Threshold
+%
+% Based on the above result, we can see many parameters have a relatively
+% small impact on the performance metrics.  To limit the design space, we
+% pick the parameters with the largest impact on the ride comfort and roll
+% stability metrics and combine them into a single list.
+
+parTableVal_trim = suspOpt_sweep_param_limits_checkVariance(parTableVal,RangeSweepResTable);
+
+% This set can be saved to a file to explore a broader set of parameters
+%save("parTableVal_trimSweepThresh.mat","parTableVal_trim")
+
+useRows = parTableVal_trim.Use == true;
+sortrows(parTableVal_trim(useRows,:))
+
+%% Identify Top 10 Parameters Based on Variance Only
+%
+% That list is then trimmed to a list of the 10 parameters for the
+% remainder of our design space investigation.  Working with only 10
+% parameters accelerates the process of exploring the design workflow.
+
+parTableVal_trim = suspOpt_sweep_param_limits_pickSet(parTableVal_trim);
+
+% This set can be saved to a file for further exploration
+%save('parTableVal_trimSweep.mat','parTableVal_trim');
+
+useRows = parTableVal_trim.Use == true;
+sortrows(parTableVal_trim(useRows,:))
+
+%%
+
+bdclose all
+close all
+
+##### SOURCE END #####
+-->
+</body>
+</html>

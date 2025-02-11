@@ -1,0 +1,440 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>Generate Training Data by Running Design of Experiments</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2025-02-07">
+<meta name="DC.source" content="suspOpt_Training_Data.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>Generate Training Data by Running Design of Experiments</h1>
+<!--introduction-->
+<p>This example generates training data for a AI surrogate model. Design of Experiments is used to generate a distribution of parameters. The simulation model is tested with those parameters and performance metrics are calculated. The parameter sets and performance metrics will be used to train an AI surrogate model.</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_Workflow_Generate_Data.png" alt=""> </p>
+<p>The code used to create this documentation is here: <a href="matlab:edit('suspOpt_Training_Data.m');">suspOpt_Training_Data.m</a>
+</p>
+<p>(<a href="matlab:web('Vehicle_Design_Opt_with_AI_Overview.html')">return to Optimizing Vehicle Design Using AI and Simscape Overview</a>)</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Open Vehicle Model</a>
+</li>
+<li>
+<a href="#2">Perform Single Test</a>
+</li>
+<li>
+<a href="#3">Load Table of Design Parameters</a>
+</li>
+<li>
+<a href="#4">Specify Design Space Defined by Influential Parameters</a>
+</li>
+<li>
+<a href="#7">Generate Space-Filling DOE with Latin Hypercube Sampling</a>
+</li>
+<li>
+<a href="#8">Run Simulations Using Parallel Computing</a>
+</li>
+<li>
+<a href="#9">Extract Performance Metrics</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Open Vehicle Model</h2>
+<p>The vehicle model is created using Simscape. The suspension is modeled using Simscape Multibody for rigid parts and joints. Simscape is used to model the springs, dampers, and driveline. A driver model attempts to follow a path provided for the test.</p>
+<p>
+<a href="matlab:open_system('sm_car_dlc_only');">Open Model</a>
+</p>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_01.png" alt=""> <h2 id="2">Perform Single Test</h2>
+<p>The vehicle model is set up to perform a test in three stages.</p>
+<div>
+<ol>
+<li>
+<b>Ride over a bump</b> and measure ride comfort</li>
+<li>
+<b>Complete a double-lane change maneuver (ISO 3888)</b> and measure stability</li>
+<li>
+<b>Brake to a stop</b> and measure braking distance</li>
+</ol>
+</div>
+<p>For each stage, a performance metric is calculated. In the plots below you can see the changes in body pitch and roll angle as it passes over the bump and through the double-lane change. The wheel speeds show the steering and braking during the maneuver.</p>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_03.png" alt=""> <h2 id="3">Load Table of Design Parameters</h2>
+<p>Adjusting the design requires selecting a set of design parameters to tune and setting ranges for those values. That set is defined in a table. For each parameter we specify:</p>
+<div>
+<ol>
+<li>
+<b>Label</b>: A short character string to identify the parameter</li>
+<li>
+<b>Parameter</b>: Location in a MATLAB structure where the parameter is defined</li>
+<li>
+<b>Index</b>: Index of the value within the structure field</li>
+<li>
+<b>Use</b>: Indicator if the parameter should be tuned (true/false). Set to "true" until a senstivity analysis has been performed.</li>
+<li>
+<b>Min</b>: Minimum value for parameter range</li>
+<li>
+<b>Max</b>: Maximum value for parameter range</li>
+<li>
+<b>Default</b>: Default value for parameter</li>
+</ol>
+</div>
+<pre class="codeoutput">
+ans =
+
+  10&times;7 table
+
+          Label                                     Parameter                                Index     Use      Min      Max     Default
+    _________________    ________________________________________________________________    _____    _____    _____    _____    _______
+
+    {'HP_A1_AR_Inbx'}    {'Vehicle.Chassis.SuspA1.AntiRollBar.sInboard.Value'           }      1      true     -0.35    -0.25      -0.3 
+    {'HP_A1_Ro_Inbz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sInboard.Value'      }      3      true     0.175    0.235     0.205 
+    {'HP_A1_Ro_Outz'}    {'Vehicle.Chassis.SuspA1.Linkage.TrackRod.sOutboard.Value'     }      3      true     0.155    0.235     0.185 
+    {'HP_A2_AR_Inbx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sInboard.Value'           }      1      true      0.25     0.35       0.3 
+    {'HP_A2_AR_Outx'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      1      true         0      0.1      0.05 
+    {'HP_A2_AR_Outy'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.sOutboard.Value'          }      2      true      0.55     0.65       0.6 
+    {'HP_A2_LA_Outy'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      2      true     0.656    0.756     0.706 
+    {'HP_A2_LA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sOutboard.Value'}      3      true       0.1      0.2      0.15 
+    {'HP_A2_LA_inRz'}    {'Vehicle.Chassis.SuspA2.Linkage.LowerWishbone.sInboardR.Value'}      3      true       0.1      0.2      0.15 
+    {'HP_A2_UA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      3      true       0.4      0.5      0.45 
+
+</pre>
+<h2 id="4">Specify Design Space Defined by Influential Parameters</h2>
+<p>Our training data needs to cover the space defined by the parameters identified by the sensitivity analysis. The entire list of design parameters is loaded and two sets of parameters for testing are created. One has all influential parameters set to their minimum value, one has all influential parameters set to their maximum value.</p>
+<p>size(runTable)</p>
+<pre class="codeoutput">
+ans =
+
+     2    94
+
+</pre>
+<p>Display only influential parameters</p>
+<p>runTable(:,useIdx)</p>
+<pre class="codeoutput">
+ans =
+
+  2&times;10 table
+
+    HP_A1_Ro_Inbz    HP_A1_Ro_Outz    HP_A1_AR_Inbx    HP_A2_UA_Outz    HP_A2_LA_inRz    HP_A2_LA_Outy    HP_A2_LA_Outz    HP_A2_AR_Inbx    HP_A2_AR_Outx    HP_A2_AR_Outy
+    _____________    _____________    _____________    _____________    _____________    _____________    _____________    _____________    _____________    _____________
+
+        0.175            0.155            -0.35             0.4              0.1             0.656             0.1             0.25                0             0.55     
+        0.235            0.235            -0.25             0.5              0.2             0.756             0.2             0.35              0.1             0.65     
+
+</pre>
+<h2 id="7">Generate Space-Filling DOE with Latin Hypercube Sampling</h2>
+<p>Parameter distributions can be generated using many methods. A common method is Latin Hypercube Sampling. We generate a large number of parameter sets that distribute the parameters evenly throughout the design space covered by the parameters in our design that we wish to tune. Each parameter value is varied within its individual range. The scatter plot below shows some of the samples for the list of influential parameters, a small subset of the parameter sets generated for our design of experiments.</p>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_04.png" alt=""> <h2 id="8">Run Simulations Using Parallel Computing</h2>
+<p>Using the parsim() command, the suite of tests is executed in parallel on multiple workers. Using Fast Restart, the model is only compiled once per worker. Because we have defined the design parameters as run-time parameters, we can modify their values even within the compiled model. This dramatically shortens the time it takes to execute the sweep.</p>
+<p>Progress is reported using the Simulation Manager. We can see if any warnings or errors have occurred during any of the tests and see how long each run has taken.</p>
+<pre class="codeoutput">1002 parameter sets submitted, 826 obey parameter constraints.
+ 
+Starting parallel pool (parpool) using the 'Processes' profile ...
+Connected to parallel pool with 4 workers.
+ 
+826 simulations completed in 2756.1753 seconds.
+ 
+Of 826 tests, 826 were valid.
+</pre>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_06.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_07.png" alt=""> <h2 id="9">Extract Performance Metrics</h2>
+<p>For all runs, performance metrics are calculated.</p>
+<div>
+<ol>
+<li>
+<b>Ride Comfort</b>: The magnitude of the vertical acceleration, roll acceleration, and pitch acceleration of the vehicle body is integrated during the period of time the vehicle passes over a bump. Larger values indicates worse ride comfort.</li>
+<li>
+<b>Roll Stability</b>: The L2 norm of the roll angle is calculated during the period of time the vehicle is in the double lane change maneuver. Larger values indicate worse vehicle stability.</li>
+<li>
+<b>Vehicle Safety</b>: The braking distance at the end of the test is measured. Longer braking distance indicates worse safety.</li>
+</ol>
+</div>
+<p>The plots below show a histogram of the performance metrics. The braking metric has a very narrow band, indicating the design space does not have much effect on the braking distance. Other design parameters or tests must be considered to impact that performance metric.</p>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_08.png" alt=""> <p class="footer">Copyright 2023-2024 The MathWorks, Inc.<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% Generate Training Data by Running Design of Experiments
+%
+% This example generates training data for a AI surrogate model. Design of
+% Experiments is used to generate a distribution of parameters. The
+% simulation model is tested with those parameters and performance metrics
+% are calculated. The parameter sets and performance metrics will be used
+% to train an AI surrogate model.
+%
+% <<suspOpt_Workflow_Generate_Data.png>>
+%
+% The code used to create this documentation is here: <matlab:edit('suspOpt_Training_Data.m'); suspOpt_Training_Data.m>
+%
+% (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
+%
+% Copyright 2023-2024 The MathWorks, Inc.
+
+%% Open Vehicle Model
+%
+% The vehicle model is created using Simscape.  The suspension is modeled
+% using Simscape Multibody for rigid parts and joints.  Simscape is used to
+% model the springs, dampers, and driveline. A driver model attempts to
+% follow a path provided for the test.
+%
+% <matlab:open_system('sm_car_dlc_only'); Open Model>
+
+setup_sm_car_model
+
+%% Perform Single Test
+%
+% The vehicle model is set up to perform a test in three stages.
+%
+% # *Ride over a bump* and measure ride comfort
+% # *Complete a double-lane change maneuver (ISO 3888)* and measure stability
+% # *Brake to a stop* and measure braking distance
+%
+% For each stage, a performance metric is calculated. In the plots below
+% you can see the changes in body pitch and roll angle as it passes over
+% the bump and through the double-lane change.  The wheel speeds show the
+% steering and braking during the maneuver.
+
+out = sim(mdl);
+logsout_sm_car = out.logsout_sm_car;
+sm_car_plot2whlspeed
+sm_car_plot5bodymeas
+
+%% Load Table of Design Parameters
+%
+% Adjusting the design requires selecting a set of design parameters to
+% tune and setting ranges for those values. That set is defined in a table.
+% For each parameter we specify:
+%
+% # *Label*: A short character string to identify the parameter
+% # *Parameter*: Location in a MATLAB structure where the parameter is
+% defined
+% # *Index*: Index of the value within the structure field
+% # *Use*: Indicator if the parameter should be tuned (true/false). Set to
+% "true" until a senstivity analysis has been performed.
+% # *Min*: Minimum value for parameter range
+% # *Max*: Maximum value for parameter range
+% # *Default*: Default value for parameter
+
+% Load parameter table with default values for all
+% and with "Use" column set to true for the DoE parameters
+load("parTableVal_trimSensitivity.mat");
+parTableVal = parTableVal_trim;
+
+useRows = parTableVal.Use == true;
+sortrows(parTableVal(useRows,:))
+
+%% Specify Design Space Defined by Influential Parameters
+%
+% Our training data needs to cover the space defined by the parameters
+% identified by the sensitivity analysis. The entire list of design
+% parameters is loaded and two sets of parameters for testing are created.
+% One has all influential parameters set to their minimum value, one has
+% all influential parameters set to their maximum value.
+
+% Get max and min values for "Use" parameters
+inputNames  = parTableVal.Label;
+inputValues = parTableVal.Default;
+useIdx      = parTableVal.Use;
+numVarying  = nnz(useIdx);
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Constraint could be applied during generation
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH If only one track rod point is used, set range accordingly
+
+% Create rows with "Use" parameters set to min
+inputValues(useIdx) = parTableVal.Min(useIdx);
+runRowMin = array2table(inputValues',VariableNames=inputNames);
+
+% Create rows with "Use" parameters set to max
+inputValues(useIdx) = parTableVal.Max(useIdx);
+runRowMax = array2table(inputValues',VariableNames=inputNames);
+
+% Assemble into table
+runTable = [runRowMin; runRowMax];
+
+%% 
+% size(runTable)
+size(runTable)
+
+%% 
+% Display only influential parameters
+%
+% runTable(:,useIdx)
+runTable(:,useIdx)
+
+%% Generate Space-Filling DOE with Latin Hypercube Sampling
+%
+% Parameter distributions can be generated using many methods.  A common
+% method is Latin Hypercube Sampling.  We generate a large number of
+% parameter sets that distribute the parameters evenly throughout the
+% design space covered by the parameters in our design that we wish to
+% tune.  Each parameter value is varied within its individual range.  The
+% scatter plot below shows some of the samples for the list of influential
+% parameters, a small subset of the parameter sets generated for our design
+% of experiments.
+
+numRuns = 1000; % Run 1000 runs
+% numRuns = 2; % Test mode
+
+% Create a doe table for the varying inputs, scaling by the range of the input variables
+doeTable = array2table(lhsdesign(numRuns,numVarying),VariableNames=inputNames(useIdx));
+minBounds = parTableVal.Min(useIdx)';
+maxBounds = parTableVal.Max(useIdx)';
+doeTable = doeTable.*(maxBounds-minBounds) + minBounds;
+
+% Add rows to runTable
+inputValues = parTableVal.Default;
+for row=1:height(doeTable)
+    runRow = array2table(inputValues',VariableNames=inputNames);
+    runRow(1,useIdx) = doeTable(row,:);
+    runTable = [runTable; runRow];
+end
+
+nParameters = 10;
+nParamPts  = height(runTable);
+
+figure
+set(gcf,'Position',[54   255   850   706])
+[H,AX,BigAX,P,PAx] = sdo.scatterPlot(runTable(1:nParamPts,useIdx));
+title(['Scatter Plot of ' num2str(nParamPts) ' Samples for ' num2str(nParameters) ' Parameters.'],'FontSize',18)
+set(gcf,'Position',[54   255   850   706])
+for j = 1:size(AX,1)
+    for k = 1:size(AX,2)
+        AX(j,k).XLabel.String = '';
+        AX(j,k).YLabel.String = '';
+        H(j,k).MarkerSize=2;
+    end
+end
+
+%% Run Simulations Using Parallel Computing
+% 
+% Using the parsim() command, the suite of tests is executed in parallel on
+% multiple workers.  Using Fast Restart, the model is only compiled once
+% per worker.  Because we have defined the design parameters as run-time
+% parameters, we can modify their values even within the compiled model.
+% This dramatically shortens the time it takes to execute the sweep.
+%
+% Progress is reported using the Simulation Manager. We can see if any
+% warnings or errors have occurred during any of the tests and see how long
+% each run has taken.
+
+[runTable,simOut] = runSimulations(mdl,Vehicle,parTableVal,runTable);
+
+
+%% Extract Performance Metrics
+%
+% For all runs, performance metrics are calculated.
+%
+% # *Ride Comfort*: The magnitude of the vertical acceleration, roll
+% acceleration, and pitch acceleration of the vehicle body is integrated
+% during the period of time the vehicle passes over a bump. Larger values
+% indicates worse ride comfort.
+% # *Roll Stability*: The L2 norm of the roll angle is calculated during
+% the period of time the vehicle is in the double lane change maneuver.
+% Larger values indicate worse vehicle stability.
+% # *Vehicle Safety*: The braking distance at the end of the test is
+% measured.  Longer braking distance indicates worse safety.
+%
+% The plots below show a histogram of the performance metrics.  The braking
+% metric has a very narrow band, indicating the design space does not have
+% much effect on the braking distance.  Other design parameters or tests
+% must be considered to impact that performance metric.
+
+perfMetrics = suspOpt_calc_perf_metric(simOut,true);
+
+% Save the results
+save("doeRunTable.mat","runTable");
+resultsTable = perfMetrics;
+save("doeResultsTable.mat","resultsTable");
+
+ahH(1) = subplot(131);
+histogram(perfMetrics.RollMetric);
+title('Roll Metric')
+ylabel('Number of Tests');
+ahH(2) = subplot(132);
+histogram(perfMetrics.RideMetric);
+title('Ride Metric')
+ahH(3) = subplot(133);
+histogram(perfMetrics.BrakMetric)
+title('Braking Metric')
+
+linkaxes(ahH,'y');
+
+
+
+
+##### SOURCE END #####
+-->
+</body>
+</html>

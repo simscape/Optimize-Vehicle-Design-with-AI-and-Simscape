@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>Explore Design Space of Suspension Using an App</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2025-02-07">
+<meta name="DC.source" content="suspOpt_Explore_Design_Space.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>Explore Design Space of Suspension Using an App</h1>
+<!--introduction-->
+<p>This example shows how a MATLAB App can be used to explore the design space using both the surrogate AI model and the multibody model.</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_Workflow_Explore_Space.png" alt=""> </p>
+<p>(<a href="matlab:web('Vehicle_Design_Opt_with_AI_Overview.html')">return to Optimizing Vehicle Design Using AI and Simscape Overview</a>)</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Open Suspension Design Space Exploration App</a>
+</li>
+<li>
+<a href="#2">Adjust Sliders for Selected Parameters</a>
+</li>
+<li>
+<a href="#3">Selecting Performance Metrics</a>
+</li>
+<li>
+<a href="#4">Selecting Design Parameter for the Sweep</a>
+</li>
+<li>
+<a href="#5">Testing with the Multibody Model</a>
+</li>
+<li>
+<a href="#6">Plotting Response Surfaces</a>
+</li>
+<li>
+<a href="#7">Plotting Response Surfaces: Infeasible Points</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Open Suspension Design Space Exploration App</h2>
+<p>A MATLAB App has been created using App Designer. Sliders allow the user to adjust the values of certain parameters. These are the parameters deemed most influential in the design. The tabs let you select which model to use for design space exploration, the surrogate AI model or the multibody model.</p>
+<p>When the AI Surrogate tab is selected, a response surface is plotted. Two of the parameters are swept over the design space while the other parameters are held at user-selected fixed values. The AI surrogate model provides a prediction of the performance metrics. The selected performance metric (roll or ride) over this 2D portion of the design space is plotted as a surface. The exact point from the values in the sliders.</p>
+<p>
+<a href="matlab:run('suspOpt_App_Design_Space_Explore.mlapp');">Open App</a>
+</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_App_Design_Space_Explore_default.PNG" alt=""> </p>
+<h2 id="2">Adjust Sliders for Selected Parameters</h2>
+<p>The dot on the surface represents the value of the performance metric for the parameter values set by the sliders. If the sliders are adjusted for the selected parameter, the point shown on the reponse surface is adjusted.</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_App_Design_Space_Explore_Roll_minMax.PNG" alt=""> </p>
+<h2 id="3">Selecting Performance Metrics</h2>
+<p>The drop down menu below the plot selects which performance metric will be plotted as a response surface. Selecting "Roll" will show how the roll performance metric varies with the two parameters selected for the sweep.</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_App_Design_Space_Explore_Ride_minMax.PNG" alt=""> </p>
+<h2 id="4">Selecting Design Parameter for the Sweep</h2>
+<p>The radio buttons in the X and Y vertical boxes select which parameters will be swept for the response surface. Selecting new parameters will create a new surface. If the same parameters are chosen for x and y, the surface will not be updated.</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_App_Design_Space_Explore_Ride_newParam.PNG" alt=""> </p>
+<h2 id="5">Testing with the Multibody Model</h2>
+<p>Switching to the Multibody tab shows a new pair of plots and a "Test Multibody Model" button. Pressing that button will test the full multibody model with the parameter values specified by the sliders plus the default values for all other design parameters. The plots show the simulation results used to calculate the roll and ride metrics.</p>
+<p>
+<img vspace="5" hspace="5" src="suspOpt_App_Design_Space_Explore_Multibody.PNG" alt=""> </p>
+<h2 id="6">Plotting Response Surfaces</h2>
+<p>The response surfaces shown in the app can generated using MATLAB code. The response surfaces below shows how the roll metric (which affects stability) and ride metric (which affects comfort) varies as we vary the anti-roll bar inboard and outboard longitudinal positions on the rear axle. This affects the stiffness of the anti-roll bar by increasing or decreasing the lever arm.</p>
+<p>The slope of the two surfaces show that these two performance metrics conflict with each other. Adjusting the locations of these hardpoints will improve one metric while harming the other. The surfaces show how sensitive each metric is to these parameters.</p>
+<img vspace="5" hspace="5" src="suspOpt_Explore_Design_Space_01.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Explore_Design_Space_02.png" alt=""> <h2 id="7">Plotting Response Surfaces: Infeasible Points</h2>
+<p>The track rod hardpoints have a constraint associated with them. Their relative vertical position cannot be too far from one another or the amount of bump steer will be too large. This is reflected in the response surface. The infeasible portion is marked with small dots.</p>
+<p>The AI surrogate model was not trained on these points. We can see that the slope of the response surface steepens greatly here. This is due to the extrapolation from AI surrogate model. We cannot trust the AI surrogate model in these regions.</p>
+<img vspace="5" hspace="5" src="suspOpt_Explore_Design_Space_03.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Explore_Design_Space_04.png" alt=""> <p class="footer">Copyright 2023-2024 The MathWorks, Inc.<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% Explore Design Space of Suspension Using an App
+%
+% This example shows how a MATLAB App can be used to explore the design
+% space using both the surrogate AI model and the multibody model.
+%
+% <<suspOpt_Workflow_Explore_Space.png>>
+%
+% (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
+%
+% Copyright 2023-2024 The MathWorks, Inc.
+
+%% Open Suspension Design Space Exploration App
+%
+% A MATLAB App has been created using App Designer. Sliders allow the user
+% to adjust the values of certain parameters.  These are the parameters
+% deemed most influential in the design. The tabs let you select which
+% model to use for design space exploration, the surrogate AI model or the
+% multibody model.
+%
+% When the AI Surrogate tab is selected, a response surface is plotted. Two
+% of the parameters are swept over the design space while the other
+% parameters are held at user-selected fixed values.  The AI surrogate
+% model provides a prediction of the performance metrics. The selected
+% performance metric (roll or ride) over this 2D portion of the design
+% space is plotted as a surface. The exact point from the values in the
+% sliders.
+%
+% <matlab:run('suspOpt_App_Design_Space_Explore.mlapp'); Open App> 
+% 
+% <<suspOpt_App_Design_Space_Explore_default.PNG>>
+
+%% Adjust Sliders for Selected Parameters
+% 
+% The dot on the surface represents the value of the performance metric
+% for the parameter values set by the sliders. If the sliders are adjusted
+% for the selected parameter, the point shown on the reponse surface is
+% adjusted.
+%
+% <<suspOpt_App_Design_Space_Explore_Roll_minMax.PNG>>
+
+%% Selecting Performance Metrics 
+% 
+% The drop down menu below the plot selects which performance metric will
+% be plotted as a response surface.  Selecting "Roll" will show how the
+% roll performance metric varies with the two parameters selected for the
+% sweep.
+%
+% <<suspOpt_App_Design_Space_Explore_Ride_minMax.PNG>>
+
+%% Selecting Design Parameter for the Sweep 
+% 
+% The radio buttons in the X and Y vertical boxes select which parameters
+% will be swept for the response surface. Selecting new parameters will
+% create a new surface.  If the same parameters are chosen for x and y, the
+% surface will not be updated.
+%
+% <<suspOpt_App_Design_Space_Explore_Ride_newParam.PNG>>
+
+%% Testing with the Multibody Model
+% 
+% Switching to the Multibody tab shows a new pair of plots and a "Test
+% Multibody Model" button.  Pressing that button will test the full
+% multibody model with the parameter values specified by the sliders plus
+% the default values for all other design parameters.  The plots show the
+% simulation results used to calculate the roll and ride metrics.
+%
+% <<suspOpt_App_Design_Space_Explore_Multibody.PNG>>
+
+%% Plotting Response Surfaces
+%
+% The response surfaces shown in the app can generated using MATLAB code.
+% The response surfaces below shows how the roll metric (which affects
+% stability) and ride metric (which affects comfort) varies as we vary the
+% anti-roll bar inboard and outboard longitudinal positions on the rear
+% axle.  This affects the stiffness of the anti-roll bar by increasing or
+% decreasing the lever arm.
+%
+% The slope of the two surfaces show that these two performance metrics
+% conflict with each other.  Adjusting the locations of these hardpoints
+% will improve one metric while harming the other.  The surfaces show how
+% sensitive each metric is to these parameters.
+
+%load machineLearningModels.mat
+load("aiModels.mat");
+load("parTableVal_trimSensitivity.mat");
+parTableVal = parTableVal_trim;
+useRows    = parTableVal.Use == true;
+inflParTbl = sortrows(parTableVal(useRows,:));
+
+XParName = 'HP_A2_AR_Inbx';
+YParName = 'HP_A2_AR_Outx';
+
+for i = 1:height(inflParTbl)
+    qpt.(char(inflParTbl(i,"Label").Variables)) = inflParTbl(i,'Default').Variables;
+end
+qpt_tbl = struct2table(qpt);
+
+figure
+[rollM, rideM] = suspOpt_plot_Response_Surf(...
+    XParName,YParName,qpt_tbl,inflParTbl,"RollMetric",...
+    aiModels.gpModel,gca);
+
+figure
+[rollM, rideM] = suspOpt_plot_Response_Surf(...
+    XParName,YParName,qpt_tbl,inflParTbl,"RideMetric",...
+    aiModels.gpModel,gca);
+
+%% Plotting Response Surfaces: Infeasible Points
+%
+% The track rod hardpoints have a constraint associated with them.  Their
+% relative vertical position cannot be too far from one another or the
+% amount of bump steer will be too large.  This is reflected in the
+% response surface.  The infeasible portion is marked with small dots.
+%
+% The AI surrogate model was not trained on these points.  We can see that
+% the slope of the response surface steepens greatly here.  This is due to
+% the extrapolation from AI surrogate model.  We cannot trust the AI
+% surrogate model in these regions.
+
+XParName = 'HP_A1_Ro_Outz';
+YParName = 'HP_A1_Ro_Inbz';
+
+figure
+[rollM, rideM] = suspOpt_plot_Response_Surf(...
+    XParName,YParName,qpt_tbl,inflParTbl,"RollMetric",...
+    aiModels.gpModel,gca);
+
+figure
+[rollM, rideM] = suspOpt_plot_Response_Surf(...
+    XParName,YParName,qpt_tbl,inflParTbl,"RideMetric",...
+    aiModels.gpModel,gca);
+##### SOURCE END #####
+-->
+</body>
+</html>
