@@ -1,5 +1,5 @@
 # **Optimizing Vehicle Design Using AI and Simscape&trade;**
-Copyright 2024 The MathWorks, Inc.
+Copyright 2025 The MathWorks, Inc.
 
 This example shows the workflow to create a surrogate AI model using 
 training data from a multibody model of a vehicle. The resulting AI 
@@ -14,6 +14,9 @@ the optimal design parameters.
 * A **MATLAB App** enables exploration of the design space using responses surfaces.
 
 Open the project file SSVT_Susp_Opt.prj to get started.
+
+View on File Exchange: [![View Wheel Loader Design with Simscape on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/180114-optimize-vehicle-design-with-ai-and-simscape)  
+You can also open in MATLAB Online: [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=simscape/Optimize-Vehicle-Design-with-AI-and-Simscape&project=SSVT_Susp_Opt.prj)
 
 ## **Vehicle Model**
 

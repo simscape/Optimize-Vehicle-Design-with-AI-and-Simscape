@@ -1,5 +1,7 @@
 %% Explore Design Space of Suspension Using an App
 %
+
+%% Overview
 % This example shows how a MATLAB App can be used to explore the design
 % space using both the surrogate AI model and the multibody model.
 %
@@ -27,7 +29,7 @@
 %
 % <matlab:run('suspOpt_App_Design_Space_Explore.mlapp'); Open App> 
 % 
-% <<suspOpt_App_Design_Space_Explore_default.PNG>>
+% <<suspOpt_App_Design_Space_Explore_default.png>>
 
 %% Adjust Sliders for Selected Parameters
 % 
@@ -36,7 +38,7 @@
 % for the selected parameter, the point shown on the reponse surface is
 % adjusted.
 %
-% <<suspOpt_App_Design_Space_Explore_Roll_minMax.PNG>>
+% <<suspOpt_App_Design_Space_Explore_Roll_minMax.png>>
 
 %% Selecting Performance Metrics 
 % 
@@ -45,7 +47,7 @@
 % roll performance metric varies with the two parameters selected for the
 % sweep.
 %
-% <<suspOpt_App_Design_Space_Explore_Ride_minMax.PNG>>
+% <<suspOpt_App_Design_Space_Explore_Ride_minMax.png>>
 
 %% Selecting Design Parameter for the Sweep 
 % 
@@ -54,7 +56,7 @@
 % create a new surface.  If the same parameters are chosen for x and y, the
 % surface will not be updated.
 %
-% <<suspOpt_App_Design_Space_Explore_Ride_newParam.PNG>>
+% <<suspOpt_App_Design_Space_Explore_Ride_newParam.png>>
 
 %% Testing with the Multibody Model
 % 
@@ -64,7 +66,7 @@
 % the default values for all other design parameters.  The plots show the
 % simulation results used to calculate the roll and ride metrics.
 %
-% <<suspOpt_App_Design_Space_Explore_Multibody.PNG>>
+% <<suspOpt_App_Design_Space_Explore_Multibody.png>>
 
 %% Plotting Response Surfaces
 %

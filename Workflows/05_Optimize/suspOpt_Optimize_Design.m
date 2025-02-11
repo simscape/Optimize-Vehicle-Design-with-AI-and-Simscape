@@ -1,5 +1,7 @@
 %% Optimize Suspension Design Parameters Using Surrogate Model
 %
+
+%% Overview
 % This example demonstrates how to use optimization solvers to quickly
 % identify optimal parameter values that meet design and performance
 % criteria. AI surrogate models are used to quickly search the design space

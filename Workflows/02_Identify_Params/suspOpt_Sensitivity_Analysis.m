@@ -1,5 +1,7 @@
 %% Test Sensitivity of Performance Metrics to Design Parameters
 %
+
+%% Overview
 % This example performs a sensitivity analysis for the design parameters in
 % a vehicle suspension. Design of Experiments is used to generate a
 % distribution of parameters. The simulation model is tested with those

@@ -1,5 +1,7 @@
 %% Create Virtual Test with Performance Metrics 
 %
+
+%% Overview
 % This example individually tests the vehicle model with one parameter
 % value set to one of its range limits. This simple sweep ensures that
 %
@@ -286,5 +288,5 @@ sortrows(parTableVal_trim(useRows,:))
 
 %%
 
-bdclose all
-close all
+%bdclose all
+%close all

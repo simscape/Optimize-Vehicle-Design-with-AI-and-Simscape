@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>Generate Training Data by Running Design of Experiments</title>
 <meta name="generator" content="MATLAB 24.2">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2025-02-07">
+<meta name="DC.date" content="2025-02-11">
 <meta name="DC.source" content="suspOpt_Training_Data.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -78,45 +78,49 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <div class="content">
 <h1>Generate Training Data by Running Design of Experiments</h1>
 <!--introduction-->
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Overview</a>
+</li>
+<li>
+<a href="#2">Open Vehicle Model</a>
+</li>
+<li>
+<a href="#3">Perform Single Test</a>
+</li>
+<li>
+<a href="#4">Load Table of Design Parameters</a>
+</li>
+<li>
+<a href="#5">Specify Design Space Defined by Influential Parameters</a>
+</li>
+<li>
+<a href="#8">Generate Space-Filling DOE with Latin Hypercube Sampling</a>
+</li>
+<li>
+<a href="#9">Run Simulations Using Parallel Computing</a>
+</li>
+<li>
+<a href="#10">Extract Performance Metrics</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Overview</h2>
 <p>This example generates training data for a AI surrogate model. Design of Experiments is used to generate a distribution of parameters. The simulation model is tested with those parameters and performance metrics are calculated. The parameter sets and performance metrics will be used to train an AI surrogate model.</p>
 <p>
 <img vspace="5" hspace="5" src="suspOpt_Workflow_Generate_Data.png" alt=""> </p>
 <p>The code used to create this documentation is here: <a href="matlab:edit('suspOpt_Training_Data.m');">suspOpt_Training_Data.m</a>
 </p>
 <p>(<a href="matlab:web('Vehicle_Design_Opt_with_AI_Overview.html')">return to Optimizing Vehicle Design Using AI and Simscape Overview</a>)</p>
-<!--/introduction-->
-<h2>Contents</h2>
-<div>
-<ul>
-<li>
-<a href="#1">Open Vehicle Model</a>
-</li>
-<li>
-<a href="#2">Perform Single Test</a>
-</li>
-<li>
-<a href="#3">Load Table of Design Parameters</a>
-</li>
-<li>
-<a href="#4">Specify Design Space Defined by Influential Parameters</a>
-</li>
-<li>
-<a href="#7">Generate Space-Filling DOE with Latin Hypercube Sampling</a>
-</li>
-<li>
-<a href="#8">Run Simulations Using Parallel Computing</a>
-</li>
-<li>
-<a href="#9">Extract Performance Metrics</a>
-</li>
-</ul>
-</div>
-<h2 id="1">Open Vehicle Model</h2>
+<h2 id="2">Open Vehicle Model</h2>
 <p>The vehicle model is created using Simscape. The suspension is modeled using Simscape Multibody for rigid parts and joints. Simscape is used to model the springs, dampers, and driveline. A driver model attempts to follow a path provided for the test.</p>
 <p>
 <a href="matlab:open_system('sm_car_dlc_only');">Open Model</a>
 </p>
-<img vspace="5" hspace="5" src="suspOpt_Training_Data_01.png" alt=""> <h2 id="2">Perform Single Test</h2>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_01.png" alt=""> <h2 id="3">Perform Single Test</h2>
 <p>The vehicle model is set up to perform a test in three stages.</p>
 <div>
 <ol>
@@ -129,7 +133,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </ol>
 </div>
 <p>For each stage, a performance metric is calculated. In the plots below you can see the changes in body pitch and roll angle as it passes over the bump and through the double-lane change. The wheel speeds show the steering and braking during the maneuver.</p>
-<img vspace="5" hspace="5" src="suspOpt_Training_Data_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_03.png" alt=""> <h2 id="3">Load Table of Design Parameters</h2>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_03.png" alt=""> <h2 id="4">Load Table of Design Parameters</h2>
 <p>Adjusting the design requires selecting a set of design parameters to tune and setting ranges for those values. That set is defined in a table. For each parameter we specify:</p>
 <div>
 <ol>
@@ -169,7 +173,7 @@ ans =
     {'HP_A2_UA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      3      true       0.4      0.5      0.45 
 
 </pre>
-<h2 id="4">Specify Design Space Defined by Influential Parameters</h2>
+<h2 id="5">Specify Design Space Defined by Influential Parameters</h2>
 <p>Our training data needs to cover the space defined by the parameters identified by the sensitivity analysis. The entire list of design parameters is loaded and two sets of parameters for testing are created. One has all influential parameters set to their minimum value, one has all influential parameters set to their maximum value.</p>
 <p>size(runTable)</p>
 <pre class="codeoutput">
@@ -192,9 +196,9 @@ ans =
         0.235            0.235            -0.25             0.5              0.2             0.756             0.2             0.35              0.1             0.65     
 
 </pre>
-<h2 id="7">Generate Space-Filling DOE with Latin Hypercube Sampling</h2>
+<h2 id="8">Generate Space-Filling DOE with Latin Hypercube Sampling</h2>
 <p>Parameter distributions can be generated using many methods. A common method is Latin Hypercube Sampling. We generate a large number of parameter sets that distribute the parameters evenly throughout the design space covered by the parameters in our design that we wish to tune. Each parameter value is varied within its individual range. The scatter plot below shows some of the samples for the list of influential parameters, a small subset of the parameter sets generated for our design of experiments.</p>
-<img vspace="5" hspace="5" src="suspOpt_Training_Data_04.png" alt=""> <h2 id="8">Run Simulations Using Parallel Computing</h2>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_04.png" alt=""> <h2 id="9">Run Simulations Using Parallel Computing</h2>
 <p>Using the parsim() command, the suite of tests is executed in parallel on multiple workers. Using Fast Restart, the model is only compiled once per worker. Because we have defined the design parameters as run-time parameters, we can modify their values even within the compiled model. This dramatically shortens the time it takes to execute the sweep.</p>
 <p>Progress is reported using the Simulation Manager. We can see if any warnings or errors have occurred during any of the tests and see how long each run has taken.</p>
 <pre class="codeoutput">1002 parameter sets submitted, 826 obey parameter constraints.
@@ -202,11 +206,11 @@ ans =
 Starting parallel pool (parpool) using the 'Processes' profile ...
 Connected to parallel pool with 4 workers.
  
-826 simulations completed in 2756.1753 seconds.
+826 simulations completed in 2990.2406 seconds.
  
 Of 826 tests, 826 were valid.
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Training_Data_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_06.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_07.png" alt=""> <h2 id="9">Extract Performance Metrics</h2>
+<img vspace="5" hspace="5" src="suspOpt_Training_Data_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_06.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Training_Data_07.png" alt=""> <h2 id="10">Extract Performance Metrics</h2>
 <p>For all runs, performance metrics are calculated.</p>
 <div>
 <ol>
@@ -228,6 +232,8 @@ Of 826 tests, 826 were valid.
 ##### SOURCE BEGIN #####
 %% Generate Training Data by Running Design of Experiments
 %
+
+%% Overview
 % This example generates training data for a AI surrogate model. Design of
 % Experiments is used to generate a distribution of parameters. The
 % simulation model is tested with those parameters and performance metrics

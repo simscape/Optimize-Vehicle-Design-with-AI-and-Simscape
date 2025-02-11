@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>Test Sensitivity of Performance Metrics to Design Parameters</title>
 <meta name="generator" content="MATLAB 24.2">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2025-02-07">
+<meta name="DC.date" content="2025-02-11">
 <meta name="DC.source" content="suspOpt_Sensitivity_Analysis.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -78,51 +78,55 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <div class="content">
 <h1>Test Sensitivity of Performance Metrics to Design Parameters</h1>
 <!--introduction-->
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Overview</a>
+</li>
+<li>
+<a href="#2">Open Vehicle Model</a>
+</li>
+<li>
+<a href="#3">Perform Single Test</a>
+</li>
+<li>
+<a href="#4">Load Table of Design Parameters</a>
+</li>
+<li>
+<a href="#5">Generate Distribution of Parameters</a>
+</li>
+<li>
+<a href="#6">Run Simulations Using Parallel Computing</a>
+</li>
+<li>
+<a href="#7">Extract Performance Metrics</a>
+</li>
+<li>
+<a href="#8">Perform Sensitivity Analysis</a>
+</li>
+<li>
+<a href="#9">Select parameters according to Correlation</a>
+</li>
+<li>
+<a href="#10">Selected List of Parameters</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Overview</h2>
 <p>This example performs a sensitivity analysis for the design parameters in a vehicle suspension. Design of Experiments is used to generate a distribution of parameters. The simulation model is tested with those parameters and performance metrics are calculated. Statistical methods are used to identify the relative sensitivities of each performance metric to each parameter.</p>
 <p>
 <img vspace="5" hspace="5" src="suspOpt_Workflow_Identify_Params.png" alt=""> </p>
 <p>The code used to create this documentation is here: <a href="matlab:edit('suspOpt_Sensitivity_Analysis.m');">suspOpt_Sensitivity_Analysis.m</a>
 </p>
 <p>(<a href="matlab:web('Vehicle_Design_Opt_with_AI_Overview.html')">return to Optimizing Vehicle Design Using AI and Simscape Overview</a>)</p>
-<!--/introduction-->
-<h2>Contents</h2>
-<div>
-<ul>
-<li>
-<a href="#1">Open Vehicle Model</a>
-</li>
-<li>
-<a href="#2">Perform Single Test</a>
-</li>
-<li>
-<a href="#3">Load Table of Design Parameters</a>
-</li>
-<li>
-<a href="#4">Generate Distribution of Parameters</a>
-</li>
-<li>
-<a href="#5">Run Simulations Using Parallel Computing</a>
-</li>
-<li>
-<a href="#6">Extract Performance Metrics</a>
-</li>
-<li>
-<a href="#7">Perform Sensitivity Analysis</a>
-</li>
-<li>
-<a href="#8">Select parameters according to Correlation</a>
-</li>
-<li>
-<a href="#9">Selected List of Parameters</a>
-</li>
-</ul>
-</div>
-<h2 id="1">Open Vehicle Model</h2>
+<h2 id="2">Open Vehicle Model</h2>
 <p>The vehicle model is created using Simscape. The suspension is modeled using Simscape Multibody for rigid parts and joints. Simscape is used to model the springs, dampers, and driveline. A driver model attempts to follow a path provided for the test.</p>
 <p>
 <a href="matlab:open_system('sm_car_dlc_only');">Open Model</a>
 </p>
-<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_01.png" alt=""> <h2 id="2">Perform Single Test</h2>
+<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_01.png" alt=""> <h2 id="3">Perform Single Test</h2>
 <p>The vehicle model is set up to perform a test in three stages.</p>
 <div>
 <ol>
@@ -135,7 +139,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </ol>
 </div>
 <p>For each stage, a performance metric is calculated. In the plots below you can see the changes in body pitch and roll angle as it passes over the bump and through the double-lane change. The wheel speeds show the steering and braking during the maneuver.</p>
-<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_03.png" alt=""> <h2 id="3">Load Table of Design Parameters</h2>
+<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_03.png" alt=""> <h2 id="4">Load Table of Design Parameters</h2>
 <p>Adjusting the design requires selecting a set of design parameters to tune and setting ranges for those values. That set is defined in a table. For each parameter we specify:</p>
 <div>
 <ol>
@@ -259,10 +263,10 @@ parTableVal =
     {'Ar_A2_AR_Stif'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.k.Value'                  }      1      true            40           60           50
 
 </pre>
-<h2 id="4">Generate Distribution of Parameters</h2>
+<h2 id="5">Generate Distribution of Parameters</h2>
 <p>Parameter distributions can be generated using many methods. A common method is Sobol. We generate 1000 parameter sets that distribute the parameters evenly throughout the design space covered by the 94 parameters in our design. Each parameter value is varied within its individual range. The scatter plot below shows 1000 samples for 8 parameters, a small subset of the 94 parameters that cover our entire design space.</p>
 <p>Some of the parameter sets will not be tested as they will violate the constraint we have on the track rod hardpoints. Those will be omitted before the simulation sweep is started.</p>
-<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_04.png" alt=""> <h2 id="5">Run Simulations Using Parallel Computing</h2>
+<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_04.png" alt=""> <h2 id="6">Run Simulations Using Parallel Computing</h2>
 <p>Using the parsim() command, the suite of tests is executed in parallel on multiple workers. Using Fast Restart, the model is only compiled once per worker. Because we have defined the design parameters as run-time parameters, we can modify their values even within the compiled model. This dramatically shortens the time it takes to execute the sweep.</p>
 <p>Progress is reported using the Simulation Manager. We can see if any warnings or errors have occurred during any of the tests and see how long each run has taken.</p>
 <pre class="codeoutput">1600 parameter sets submitted, 1311 obey parameter constraints.
@@ -270,11 +274,11 @@ parTableVal =
 Starting parallel pool (parpool) using the 'Processes' profile ...
 Connected to parallel pool with 4 workers.
  
-1311 simulations completed in 5434.9865 seconds.
+1311 simulations completed in 5667.4656 seconds.
  
-Of 1311 tests, 920 were valid.
+Of 1311 tests, 922 were valid.
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_06.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_07.png" alt=""> <h2 id="6">Extract Performance Metrics</h2>
+<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_06.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_07.png" alt=""> <h2 id="7">Extract Performance Metrics</h2>
 <p>For all runs, performance metrics are calculated.</p>
 <div>
 <ol>
@@ -287,7 +291,7 @@ Of 1311 tests, 920 were valid.
 </ol>
 </div>
 <p>The plots below show a histogram of the performance metrics. The braking metric has a very narrow band, indicating the design space does not have much effect on the braking distance. Other design parameters or tests must be considered to impact that performance metric.</p>
-<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_08.png" alt=""> <h2 id="7">Perform Sensitivity Analysis</h2>
+<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_08.png" alt=""> <h2 id="8">Perform Sensitivity Analysis</h2>
 <p>There are many methods that can be used to perform a sensitivity analysis. Results using the Standard Regression method are shown below.</p>
 <p>In the first plot below, the coefficients indicating the influence of the parameter on the performance metrics are plotted in a tornado plot (unsorted) using the MATLAB command stem.</p>
 <div>
@@ -301,8 +305,8 @@ Of 1311 tests, 920 were valid.
 <p>The stems with filled-in circles are the ones our criteria have selected for design space exploration. To see the criteria for selection, look at code <a href="matlab:edit('suspOpt_Sensitivity_Analysis_select.m');">suspOpt_Sensitivity_Analysis_select.m</a>
 </p>
 <p>The second plot shows only the parameters that have been selected. The label includes abbreviations such as "HP" for hardpoint, "A1" for front axle", "UA" for upper arm", and so on. A table of the selected parameters is shown in the next section.</p>
-<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_09.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_10.png" alt=""> <h2 id="8">Select parameters according to Correlation</h2>
-<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_11.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_12.png" alt=""> <h2 id="9">Selected List of Parameters</h2>
+<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_09.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_10.png" alt=""> <h2 id="9">Select parameters according to Correlation</h2>
+<img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_11.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_12.png" alt=""> <h2 id="10">Selected List of Parameters</h2>
 <p>That list is then trimmed for the remainder of our design space investigation. Working with a reduced number of parameters accelerates the process of exploring the design workflow. Below is the list selected using our criteria applied to Standardized Regression coefficients. The track rod parameters have also been explicitly added to the list so that we can see how to implement constraints on parameters in the rest of the workflow.</p>
 <pre class="codeoutput">
 ans =
@@ -333,6 +337,8 @@ ans =
 ##### SOURCE BEGIN #####
 %% Test Sensitivity of Performance Metrics to Design Parameters
 %
+
+%% Overview
 % This example performs a sensitivity analysis for the design parameters in
 % a vehicle suspension. Design of Experiments is used to generate a
 % distribution of parameters. The simulation model is tested with those

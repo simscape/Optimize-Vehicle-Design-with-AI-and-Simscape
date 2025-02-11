@@ -65,7 +65,7 @@ for r_i=1:numFRTests
     simInputFR(r_i) = setVariable(simInputFR(r_i),'Vehicle',Vehicle);
     simInputFR(r_i).UserString = UserString_SimInput;
     simInputFR(r_i) = setModelParameter(simInputFR(r_i),SimMechanicsOpenEditorOnUpdate="off");
-
+    simInputFR(r_i) = setModelParameter(simInputFR(r_i),SimscapeLogType="None");
 end
 
 %% Run simulations FAST RESTART

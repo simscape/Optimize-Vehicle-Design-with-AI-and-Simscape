@@ -1,5 +1,7 @@
 %% Generate Training Data by Running Design of Experiments
 %
+
+%% Overview
 % This example generates training data for a AI surrogate model. Design of
 % Experiments is used to generate a distribution of parameters. The
 % simulation model is tested with those parameters and performance metrics

@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>Optimize Suspension Design Parameters Using Surrogate Model</title>
 <meta name="generator" content="MATLAB 24.2">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2025-02-11">
+<meta name="DC.date" content="2025-02-12">
 <meta name="DC.source" content="suspOpt_Optimize_Design.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -78,6 +78,46 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <div class="content">
 <h1>Optimize Suspension Design Parameters Using Surrogate Model</h1>
 <!--introduction-->
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Overview</a>
+</li>
+<li>
+<a href="#2">Define Optimization Variables</a>
+</li>
+<li>
+<a href="#3">Load AI Models and Define Design Objective</a>
+</li>
+<li>
+<a href="#4">Define Constraints on Design Parameters</a>
+</li>
+<li>
+<a href="#5">Scenario 1: Minimize Roll Metric</a>
+</li>
+<li>
+<a href="#7">Scenario 2: Minimize Roll, Constrain Parameters</a>
+</li>
+<li>
+<a href="#9">Scenario 3: Minimize Ride, Nonlinear Constraint on Design Objective</a>
+</li>
+<li>
+<a href="#11">Scenario 4: Minimize (Ride + Roll)</a>
+</li>
+<li>
+<a href="#13">Scenario 5: Minimize Ride and Minimize Roll (Multi-Objective Optimization)</a>
+</li>
+<li>
+<a href="#15">Compare Solutions</a>
+</li>
+<li>
+<a href="#16">Validate Solutions with Simulation</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Overview</h2>
 <p>This example demonstrates how to use optimization solvers to quickly identify optimal parameter values that meet design and performance criteria. AI surrogate models are used to quickly search the design space and the results are validated against the full multibody simulation model. The workflow is summarized and illustrated below:</p>
 <div>
 <ol>
@@ -94,43 +134,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <p>The code used to create this documentation is here: <a href="matlab:edit('suspOpt_Optimize_Design.m');">suspOpt_Optimize_Design.m</a>
 </p>
 <p>(<a href="matlab:web('Vehicle_Design_Opt_with_AI_Overview.html')">return to Optimizing Vehicle Design Using AI and Simscape Overview</a>)</p>
-<!--/introduction-->
-<h2>Contents</h2>
-<div>
-<ul>
-<li>
-<a href="#1">Define Optimization Variables</a>
-</li>
-<li>
-<a href="#2">Load AI Models and Define Design Objective</a>
-</li>
-<li>
-<a href="#3">Define Constraints on Design Parameters</a>
-</li>
-<li>
-<a href="#4">Scenario 1: Minimize Roll Metric</a>
-</li>
-<li>
-<a href="#6">Scenario 2: Minimize Roll, Constrain Parameters</a>
-</li>
-<li>
-<a href="#8">Scenario 3: Minimize Ride, Nonlinear Constraint on Design Objective</a>
-</li>
-<li>
-<a href="#10">Scenario 4: Minimize (Ride + Roll)</a>
-</li>
-<li>
-<a href="#12">Scenario 5: Minimize Ride and Minimize Roll (Multi-Objective Optimization)</a>
-</li>
-<li>
-<a href="#14">Compare Solutions</a>
-</li>
-<li>
-<a href="#15">Validate Solutions with Simulation</a>
-</li>
-</ul>
-</div>
-<h2 id="1">Define Optimization Variables</h2>
+<h2 id="2">Define Optimization Variables</h2>
 <p>Adjusting the design requires selecting a set of design parameters to tune. The design parameters have been selected using sensitivity analysis. The design parameters and their ranges are loaded into the MATLAB workspace and assembled into an optimization variable where the full optimization problem will be defined.</p>
 <pre class="codeoutput">
 ans =
@@ -152,12 +156,12 @@ ans =
     {'HP_A2_UA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      3      true       0.4      0.5      0.45 
 
 </pre>
-<h2 id="2">Load AI Models and Define Design Objective</h2>
+<h2 id="3">Load AI Models and Define Design Objective</h2>
 <p>To accelerate the optimization, AI surrogate models will be used. The AI surrogate models are loaded from a file. The models can predict a performance metric based on the design parameters. The function call to obtain the prediction from the AI surrogate model is added to the optimization variable which already has the design parameters and constraints.</p>
-<h2 id="3">Define Constraints on Design Parameters</h2>
+<h2 id="4">Define Constraints on Design Parameters</h2>
 <p>The design parameters have upper and lower and upper limits. Additional restrictions must be placed on the track rod hardpoints to avoid excessive bump steer.</p>
 <p>Specifically: -0.05 &lt;= HP_A1_Ro_Inbz - HP_A1_Ro_Outz &lt;= 0.04</p>
-<h2 id="4">Scenario 1: Minimize Roll Metric</h2>
+<h2 id="5">Scenario 1: Minimize Roll Metric</h2>
 <p>Our optimization problem is defined in terms of design parameters, objective, and constraints. We must now choose an optimization solver and optimize the design.</p>
 <p>Recommendations for choosing an optimization solver</p>
 <p>Some things to consider when choosing between these solvers:</p>
@@ -174,9 +178,9 @@ ans =
 <pre class="codeoutput">
 Solving problem using patternsearch.
 patternsearch stopped because the mesh size was less than options.MeshTolerance.
-Elapsed time is 9.744963 seconds.
+Elapsed time is 9.983237 seconds.
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_01.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_02.png" alt=""> <h2 id="6">Scenario 2: Minimize Roll, Constrain Parameters</h2>
+<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_01.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_02.png" alt=""> <h2 id="7">Scenario 2: Minimize Roll, Constrain Parameters</h2>
 <p>The design space for our system has changed.</p>
 <div>
 <ul>
@@ -188,38 +192,38 @@ Elapsed time is 9.744963 seconds.
 <pre class="codeoutput">
 Solving problem using patternsearch.
 patternsearch stopped because the mesh size was less than options.MeshTolerance.
-Elapsed time is 6.064412 seconds.
+Elapsed time is 5.531340 seconds.
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_03.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_04.png" alt=""> <h2 id="8">Scenario 3: Minimize Ride, Nonlinear Constraint on Design Objective</h2>
+<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_03.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_04.png" alt=""> <h2 id="9">Scenario 3: Minimize Ride, Nonlinear Constraint on Design Objective</h2>
 <p>Suppose the ride discomfort metric must meet the following requirement: rideMetric &lt;= 0.95. The optimization problem can be modified to include this requirement as a nonlinear constraint.</p>
 <pre class="codeoutput">
 Solving problem using patternsearch.
 Optimization finished: mesh size less than options.MeshTolerance 
 and constraint violation is less than options.ConstraintTolerance.
-Elapsed time is 4.387220 seconds.
+Elapsed time is 2.743989 seconds.
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_06.png" alt=""> <h2 id="10">Scenario 4: Minimize (Ride + Roll)</h2>
+<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_06.png" alt=""> <h2 id="11">Scenario 4: Minimize (Ride + Roll)</h2>
 <p>Multiple responses can be combined into a single objective function. The optimization solver will optimize both responses at the same time.</p>
 <pre class="codeoutput">
 Solving problem using patternsearch.
 patternsearch stopped because the mesh size was less than options.MeshTolerance.
-Elapsed time is 8.438075 seconds.
+Elapsed time is 7.808693 seconds.
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_07.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_08.png" alt=""> <h2 id="12">Scenario 5: Minimize Ride and Minimize Roll (Multi-Objective Optimization)</h2>
+<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_07.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_08.png" alt=""> <h2 id="13">Scenario 5: Minimize Ride and Minimize Roll (Multi-Objective Optimization)</h2>
 <p>The approach above of combining multiple responses into a single objective function identifies a single solution on the Pareto front. The location of the solution along the Pareto front depended on the weight and scale factors used for each response. A more general approach is to use a multi-objective optimization algorithm to resolve the full Pareto front, fully characterizing the optimal trade-off between the objectives.</p>
 <pre class="codeoutput">
 Solving problem using gamultiobj.
 gamultiobj stopped because the average change in the spread of Pareto solutions is less than options.FunctionTolerance.
-Elapsed time is 134.763958 seconds.
+Elapsed time is 167.964137 seconds.
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_09.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_10.png" alt=""> <h2 id="14">Compare Solutions</h2>
+<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_09.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_10.png" alt=""> <h2 id="15">Compare Solutions</h2>
 <p>Compare the design solutions found from the different optimization problems. Inspect the tabular data shown above, or create plots to visualize the data. For example, plot the solutions on a parallel coordinate plot.</p>
-<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_11.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_12.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_13.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_14.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_15.png" alt=""> <h2 id="15">Validate Solutions with Simulation</h2>
+<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_11.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_12.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_13.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_14.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_15.png" alt=""> <h2 id="16">Validate Solutions with Simulation</h2>
 <p>Validate the predicted performance of the optimization solutions using Simscape simulations.</p>
 <pre class="codeoutput">6 parameter sets submitted, 6 obey parameter constraints.
  
  
-6 simulations completed in 138.9902 seconds.
+6 simulations completed in 120.3645 seconds.
  
 Of 6 tests, 6 were valid.
 
@@ -233,12 +237,12 @@ responseComparison =
          Description         Ride Predicted    Roll Predicted    RideMetric    RollMetric    Roll % Error    RideDiscomfort % Error
     _____________________    ______________    ______________    __________    __________    ____________    ______________________
                                                                                                                                    
-    "Default"                    1.0263            0.14033         1.0269        0.14074       0.056619              0.29167       
-    "Min Roll"                   1.2915           0.071414         1.3037       0.079713        0.93296               10.411       
-    "Min Roll, Lim Pars"         1.1962           0.096094         1.1981         0.0975        0.16225               1.4423       
-    "Min Roll, Lim Ride"        0.94767            0.12804         0.9534        0.12801        0.60045             0.026155       
-    "Min (Roll+Ride)"            1.1746            0.09647         1.1751       0.099468       0.047196               3.0146       
-    "Min Roll &amp; Min Ride"       0.90695            0.13982        0.91148        0.14064          0.497              0.58255       
+    "Default"                    1.0264            0.14033         1.0275         0.1407        0.10631             0.26276        
+    "Min Roll"                   1.2914            0.07144         1.3033       0.079737         0.9126              10.406        
+    "Min Roll, Lim Pars"         1.1959           0.096114          1.199       0.097508        0.26549              1.4294        
+    "Min Roll, Lim Ride"        0.94753            0.12843        0.95314        0.12868        0.58865             0.19301        
+    "Min (Roll+Ride)"            1.1745           0.096464         1.1757        0.09947       0.097303              3.0229        
+    "Min Roll &amp; Min Ride"       0.90907             0.1386        0.91301        0.13952        0.43235             0.65541        
 
 </pre>
 <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_16.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_17.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_18.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_19.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_20.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_21.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_22.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_23.png" alt=""> <p class="footer">Copyright 2023-2024 The MathWorks, Inc.<br>
@@ -250,6 +254,8 @@ responseComparison =
 ##### SOURCE BEGIN #####
 %% Optimize Suspension Design Parameters Using Surrogate Model
 %
+
+%% Overview
 % This example demonstrates how to use optimization solvers to quickly
 % identify optimal parameter values that meet design and performance
 % criteria. AI surrogate models are used to quickly search the design space

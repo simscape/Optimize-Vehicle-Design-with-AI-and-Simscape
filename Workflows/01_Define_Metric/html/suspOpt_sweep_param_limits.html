@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>Create Virtual Test with Performance Metrics</title>
 <meta name="generator" content="MATLAB 24.2">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2025-02-07">
+<meta name="DC.date" content="2025-02-11">
 <meta name="DC.source" content="suspOpt_sweep_param_limits.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -78,6 +78,40 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <div class="content">
 <h1>Create Virtual Test with Performance Metrics</h1>
 <!--introduction-->
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Overview</a>
+</li>
+<li>
+<a href="#2">Open Vehicle Model</a>
+</li>
+<li>
+<a href="#4">Generate Table of Design Parameters</a>
+</li>
+<li>
+<a href="#5">Create Simulation Input Objects to Test Range Limits</a>
+</li>
+<li>
+<a href="#6">Run Simulations Using Parallel Computing</a>
+</li>
+<li>
+<a href="#7">Check Run Validity</a>
+</li>
+<li>
+<a href="#8">Extract Performance Metrics</a>
+</li>
+<li>
+<a href="#10">Identify Sensitive Values Based on Variance Threshold</a>
+</li>
+<li>
+<a href="#11">Identify Top 10 Parameters Based on Variance Only</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Overview</h2>
 <p>This example individually tests the vehicle model with one parameter value set to one of its range limits. This simple sweep ensures that</p>
 <div>
 <ul>
@@ -92,37 +126,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <p>The code used to create this documentation is here: <a href="matlab:edit('suspOpt_sweep_param_limits.m');">suspOpt_sweep_param_limits.m</a>
 </p>
 <p>(<a href="matlab:web('Vehicle_Design_Opt_with_AI_Overview.html')">return to Optimizing Vehicle Design Using AI and Simscape Overview</a>)</p>
-<!--/introduction-->
-<h2>Contents</h2>
-<div>
-<ul>
-<li>
-<a href="#1">Open Vehicle Model</a>
-</li>
-<li>
-<a href="#3">Generate Table of Design Parameters</a>
-</li>
-<li>
-<a href="#4">Create Simulation Input Objects to Test Range Limits</a>
-</li>
-<li>
-<a href="#5">Run Simulations Using Parallel Computing</a>
-</li>
-<li>
-<a href="#6">Check Run Validity</a>
-</li>
-<li>
-<a href="#7">Extract Performance Metrics</a>
-</li>
-<li>
-<a href="#9">Identify Sensitive Values Based on Variance Threshold</a>
-</li>
-<li>
-<a href="#10">Identify Top 10 Parameters Based on Variance Only</a>
-</li>
-</ul>
-</div>
-<h2 id="1">Open Vehicle Model</h2>
+<h2 id="2">Open Vehicle Model</h2>
 <p>Open model and load default parameters. The vehicle model is set up to perform a test in three stages.</p>
 <div>
 <ol>
@@ -138,7 +142,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <p>
 <a href="matlab:open_system('sm_car_dlc_only');">Open Model</a>
 </p>
-<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_01.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_03.png" alt=""> <h2 id="3">Generate Table of Design Parameters</h2>
+<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_01.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_02.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_03.png" alt=""> <h2 id="4">Generate Table of Design Parameters</h2>
 <p>Adjusting the design requires selecting a set of design parameters to tune and setting ranges for those values. That set is defined in a table. For each parameter we specify:</p>
 <div>
 <ol>
@@ -262,7 +266,7 @@ parTableVal =
     {'Ar_A2_AR_Stif'}    {'Vehicle.Chassis.SuspA2.AntiRollBar.k.Value'                  }      1      true            40           60           50
 
 </pre>
-<h2 id="4">Create Simulation Input Objects to Test Range Limits</h2>
+<h2 id="5">Create Simulation Input Objects to Test Range Limits</h2>
 <p>A suite of tests is defined using the table above. For each test, all parameters set to the default value and one parameter set to either of its range limits. The tests are created using a SimulationInput object so that the tests can be performed in series or parallel without modifying the original model. Parameter value changes and any model parameter setting overrides are applied temporarily during the test using the SimulationInput object.</p>
 <pre class="codeoutput">
 simInputFR = 
@@ -281,14 +285,14 @@ simInputFR =
     VariantConfiguration
 
 </pre>
-<h2 id="5">Run Simulations Using Parallel Computing</h2>
+<h2 id="6">Run Simulations Using Parallel Computing</h2>
 <p>Using the parsim() command, the suite of tests is executed in parallel on multiple workers. Using Fast Restart, the model is only compiled once per worker. Because we have defined the design parameters as run-time parameters, we can modify their values even within the compiled model. This dramatically shortens the time it takes to execute the sweep.</p>
 <p>Progress is reported using the Simulation Manager. We can see if any warnings or errors have occurred during any of the tests and see how long each run has taken.</p>
 <pre class="codeoutput">Starting parallel pool (parpool) using the 'Processes' profile ...
 Connected to parallel pool with 4 workers.
-188 simulations completed in 745.5389 seconds.
+188 simulations completed in 728.8652 seconds.
 </pre>
-<h2 id="6">Check Run Validity</h2>
+<h2 id="7">Check Run Validity</h2>
 <p>The outputs of the test sweep are checked to make sure the runs are all valid. A test run is deemed invalid if any of the following thresholds are exceeded for an unacceptable period of time:</p>
 <div>
 <ol>
@@ -300,7 +304,7 @@ Connected to parallel pool with 4 workers.
 <p>Plot show the values of the measurements for all the runs, and a count of the valid runs is displayed. If any run is invalid, we may need to reconsider our parameter ranges.</p>
 <pre class="codeoutput">Number of valid runs: 188
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_04.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_06.png" alt=""> <h2 id="7">Extract Performance Metrics</h2>
+<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_04.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_06.png" alt=""> <h2 id="8">Extract Performance Metrics</h2>
 <p>For all runs, performance metrics are calculated.</p>
 <div>
 <ol>
@@ -314,7 +318,7 @@ Connected to parallel pool with 4 workers.
 </div>
 <p>The impact of the parameters on the performance metric are plotted. The plot shows (Metric with parameter at max value - Metric with parameter at min value)/(maximum observed performance metric value).</p>
 <p>This simple measure indicates how sensitive the metric is to the parameter value. A more rigorous sensitivity analysis should be performed to truly determine parameter sensitivity. The plots show that the design parameters have a relatively small impact on the braking distance.</p>
-<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_07.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_08.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_09.png" alt=""> <h2 id="9">Identify Sensitive Values Based on Variance Threshold</h2>
+<img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_07.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_08.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_sweep_param_limits_09.png" alt=""> <h2 id="10">Identify Sensitive Values Based on Variance Threshold</h2>
 <p>Based on the above result, we can see many parameters have a relatively small impact on the performance metrics. To limit the design space, we pick the parameters with the largest impact on the ride comfort and roll stability metrics and combine them into a single list.</p>
 <pre class="codeoutput">
 ans =
@@ -361,7 +365,7 @@ ans =
     {'HP_A2_Up_WCtz'}    {'Vehicle.Chassis.SuspA2.Linkage.Upright.sWheelCentre.Value'   }      3      true        0.28       0.38       0.33
 
 </pre>
-<h2 id="10">Identify Top 10 Parameters Based on Variance Only</h2>
+<h2 id="11">Identify Top 10 Parameters Based on Variance Only</h2>
 <p>That list is then trimmed to a list of the 10 parameters for the remainder of our design space investigation. Working with only 10 parameters accelerates the process of exploring the design workflow.</p>
 <pre class="codeoutput">
 ans =
@@ -392,6 +396,8 @@ ans =
 ##### SOURCE BEGIN #####
 %% Create Virtual Test with Performance Metrics 
 %
+
+%% Overview
 % This example individually tests the vehicle model with one parameter
 % value set to one of its range limits. This simple sweep ensures that
 %
@@ -678,8 +684,8 @@ sortrows(parTableVal_trim(useRows,:))
 
 %%
 
-bdclose all
-close all
+%bdclose all
+%close all
 
 ##### SOURCE END #####
 -->
