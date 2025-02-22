@@ -14,7 +14,7 @@ function checkData = suspOpt_check_runValid_wSpd(logsout_VehBus,Vehicle)
 % Copyright 2023-2024 The MathWorks, Inc.
 
 % Thresholds for validity
-ws_thresh   = 40 ; % m/s
+ws_thresh   = 40 ; % km/hr
 ws_duration = 0.5; % sec
 
 % Get tire radius to convert wheel rotation speed to linear speed

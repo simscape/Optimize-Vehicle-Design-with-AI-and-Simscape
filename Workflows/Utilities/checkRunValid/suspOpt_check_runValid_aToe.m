@@ -32,6 +32,6 @@ for run_i = 1:length(logsout_VehBus)
     toeLInvalid = hasExceededThreshold(abs(logsout_aToeL), logsout_t, toe_thresh, toe_time);
     toeRInvalid = hasExceededThreshold(abs(logsout_aToeR), logsout_t, toe_thresh, toe_time);
 
-    % Result is invalid if either toe angle fails the criteria
+    % Result is invalid only if both toe angle measurements are invalid
     checkData(run_i).valid_aToe = ~(toeLInvalid && toeRInvalid);
 end
