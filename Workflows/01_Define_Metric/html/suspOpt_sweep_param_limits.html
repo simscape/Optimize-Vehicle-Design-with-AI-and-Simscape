@@ -7,9 +7,9 @@ This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
       -->
 <title>Create Virtual Test with Performance Metrics</title>
-<meta name="generator" content="MATLAB 25.1">
+<meta name="generator" content="MATLAB 25.2">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2025-12-17">
+<meta name="DC.date" content="2025-12-18">
 <meta name="DC.source" content="suspOpt_sweep_param_limits.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -289,10 +289,8 @@ simInputFR =
 <p>Using the parsim() command, the suite of tests is executed in parallel on multiple workers. Using Fast Restart, the model is only compiled once per worker. Because we have defined the design parameters as run-time parameters, we can modify their values even within the compiled model. This dramatically shortens the time it takes to execute the sweep.</p>
 <p>Progress is reported using the Simulation Manager. We can see if any warnings or errors have occurred during any of the tests and see how long each run has taken.</p>
 <pre class="codeoutput">Starting parallel pool (parpool) using the 'Processes' profile ...
-Preserving jobs with IDs: 1 because they contain crash dump files.
-You can use 'delete(myCluster.Jobs)' to remove all jobs created with profile Processes. To create 'myCluster' use 'myCluster = parcluster('Processes')'.
 Connected to parallel pool with 4 workers.
-188 simulations completed in 980.831 seconds.
+188 simulations completed in 921.4156 seconds.
 </pre>
 <h2 id="7">Check Run Validity</h2>
 <p>The outputs of the test sweep are checked to make sure the runs are all valid. A test run is deemed invalid if any of the following thresholds are exceeded for an unacceptable period of time:</p>
@@ -390,7 +388,7 @@ ans =
 
 </pre>
 <p class="footer">Copyright 2023-2025 The MathWorks, Inc.<br>
-<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2025a</a>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2025b</a>
 <br>
 </p>
 </div>
