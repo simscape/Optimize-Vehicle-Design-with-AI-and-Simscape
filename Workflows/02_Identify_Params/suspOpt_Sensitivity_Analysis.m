@@ -15,7 +15,7 @@
 %
 % (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
 %
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 %% Open Vehicle Model
 %
@@ -127,6 +127,8 @@ end
 % warnings or errors have occurred during any of the tests and see how long
 % each run has taken.
 
+close(gcf)
+close(h2_sm_car)
 [runTableSense_OUT,simOutSense] = runSimulations(mdl,Vehicle,parTableVal,runTableSense);
 
 %% Extract Performance Metrics

@@ -19,7 +19,7 @@
 %
 % (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
 %
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 %% Define Optimization Variables
 %
@@ -417,6 +417,7 @@ suspOpt_Optimize_Design_plot_ParamAndDefault(solutionsTable(2:end,:))
 
 % Create a run table with values specified for the full set of parameters
 % Initialize the values using the default values from the parameters table
+close all
 predictedOptimal = repmat(paramsAllDef,height(solutionsTable),1);
 
 % Update the values for the parameters included in the optimization using

@@ -7,9 +7,9 @@ This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
       -->
 <title>Optimize Suspension Design Parameters Using Surrogate Model</title>
-<meta name="generator" content="MATLAB 24.2">
+<meta name="generator" content="MATLAB 25.1">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2025-02-12">
+<meta name="DC.date" content="2025-12-18">
 <meta name="DC.source" content="suspOpt_Optimize_Design.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -178,7 +178,7 @@ ans =
 <pre class="codeoutput">
 Solving problem using patternsearch.
 patternsearch stopped because the mesh size was less than options.MeshTolerance.
-Elapsed time is 9.983237 seconds.
+Elapsed time is 10.431359 seconds.
 </pre>
 <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_01.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_02.png" alt=""> <h2 id="7">Scenario 2: Minimize Roll, Constrain Parameters</h2>
 <p>The design space for our system has changed.</p>
@@ -192,7 +192,7 @@ Elapsed time is 9.983237 seconds.
 <pre class="codeoutput">
 Solving problem using patternsearch.
 patternsearch stopped because the mesh size was less than options.MeshTolerance.
-Elapsed time is 5.531340 seconds.
+Elapsed time is 11.202153 seconds.
 </pre>
 <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_03.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_04.png" alt=""> <h2 id="9">Scenario 3: Minimize Ride, Nonlinear Constraint on Design Objective</h2>
 <p>Suppose the ride discomfort metric must meet the following requirement: rideMetric &lt;= 0.95. The optimization problem can be modified to include this requirement as a nonlinear constraint.</p>
@@ -200,21 +200,21 @@ Elapsed time is 5.531340 seconds.
 Solving problem using patternsearch.
 Optimization finished: mesh size less than options.MeshTolerance 
 and constraint violation is less than options.ConstraintTolerance.
-Elapsed time is 2.743989 seconds.
+Elapsed time is 3.500532 seconds.
 </pre>
 <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_06.png" alt=""> <h2 id="11">Scenario 4: Minimize (Ride + Roll)</h2>
 <p>Multiple responses can be combined into a single objective function. The optimization solver will optimize both responses at the same time.</p>
 <pre class="codeoutput">
 Solving problem using patternsearch.
 patternsearch stopped because the mesh size was less than options.MeshTolerance.
-Elapsed time is 7.808693 seconds.
+Elapsed time is 8.292883 seconds.
 </pre>
 <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_07.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_08.png" alt=""> <h2 id="13">Scenario 5: Minimize Ride and Minimize Roll (Multi-Objective Optimization)</h2>
 <p>The approach above of combining multiple responses into a single objective function identifies a single solution on the Pareto front. The location of the solution along the Pareto front depended on the weight and scale factors used for each response. A more general approach is to use a multi-objective optimization algorithm to resolve the full Pareto front, fully characterizing the optimal trade-off between the objectives.</p>
 <pre class="codeoutput">
 Solving problem using gamultiobj.
 gamultiobj stopped because the average change in the spread of Pareto solutions is less than options.FunctionTolerance.
-Elapsed time is 167.964137 seconds.
+Elapsed time is 243.414129 seconds.
 </pre>
 <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_09.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_10.png" alt=""> <h2 id="15">Compare Solutions</h2>
 <p>Compare the design solutions found from the different optimization problems. Inspect the tabular data shown above, or create plots to visualize the data. For example, plot the solutions on a parallel coordinate plot.</p>
@@ -222,8 +222,12 @@ Elapsed time is 167.964137 seconds.
 <p>Validate the predicted performance of the optimization solutions using Simscape simulations.</p>
 <pre class="codeoutput">6 parameter sets submitted, 6 obey parameter constraints.
  
+Starting parallel pool (parpool) using the 'Processes' profile ...
+Preserving jobs with IDs: 1 because they contain crash dump files.
+You can use 'delete(myCluster.Jobs)' to remove all jobs created with profile Processes. To create 'myCluster' use 'myCluster = parcluster('Processes')'.
+Connected to parallel pool with 4 workers.
  
-6 simulations completed in 120.3645 seconds.
+6 simulations completed in 124.073 seconds.
  
 Of 6 tests, 6 were valid.
 
@@ -237,16 +241,16 @@ responseComparison =
          Description         Ride Predicted    Roll Predicted    RideMetric    RollMetric    Roll % Error    RideDiscomfort % Error
     _____________________    ______________    ______________    __________    __________    ____________    ______________________
                                                                                                                                    
-    "Default"                    1.0264            0.14033         1.0275         0.1407        0.10631             0.26276        
-    "Min Roll"                   1.2914            0.07144         1.3033       0.079737         0.9126              10.406        
-    "Min Roll, Lim Pars"         1.1959           0.096114          1.199       0.097508        0.26549              1.4294        
-    "Min Roll, Lim Ride"        0.94753            0.12843        0.95314        0.12868        0.58865             0.19301        
-    "Min (Roll+Ride)"            1.1745           0.096464         1.1757        0.09947       0.097303              3.0229        
-    "Min Roll &amp; Min Ride"       0.90907             0.1386        0.91301        0.13952        0.43235             0.65541        
+    "Default"                    1.0266            0.14038         1.0274        0.14073       0.078666             0.25237        
+    "Min Roll"                   1.2436           0.072856           1.26        0.08007         1.2964              9.0098        
+    "Min Roll, Lim Pars"         1.2859           0.097844         1.2849       0.096372       0.075242              1.5269        
+    "Min Roll, Lim Ride"        0.94758            0.12857        0.95278        0.12814        0.54564             0.33163        
+    "Min (Roll+Ride)"            1.2004           0.097299         1.2018       0.097091        0.11993             0.21459        
+    "Min Roll &amp; Min Ride"       0.90366            0.13892          0.909        0.13972        0.58771             0.56853        
 
 </pre>
-<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_16.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_17.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_18.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_19.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_20.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_21.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_22.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_23.png" alt=""> <p class="footer">Copyright 2023-2024 The MathWorks, Inc.<br>
-<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<img vspace="5" hspace="5" src="suspOpt_Optimize_Design_16.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_17.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_18.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_19.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_20.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_21.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_22.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Optimize_Design_23.png" alt=""> <p class="footer">Copyright 2023-2025 The MathWorks, Inc.<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2025a</a>
 <br>
 </p>
 </div>
@@ -273,7 +277,7 @@ responseComparison =
 %
 % (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
 %
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 %% Define Optimization Variables
 %
@@ -671,6 +675,7 @@ suspOpt_Optimize_Design_plot_ParamAndDefault(solutionsTable(2:end,:))
 
 % Create a run table with values specified for the full set of parameters
 % Initialize the values using the default values from the parameters table
+close all
 predictedOptimal = repmat(paramsAllDef,height(solutionsTable),1);
 
 % Update the values for the parameters included in the optimization using

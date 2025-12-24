@@ -7,9 +7,9 @@ This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
       -->
 <title>Test Sensitivity of Performance Metrics to Design Parameters</title>
-<meta name="generator" content="MATLAB 24.2">
+<meta name="generator" content="MATLAB 25.1">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2025-02-11">
+<meta name="DC.date" content="2025-12-18">
 <meta name="DC.source" content="suspOpt_Sensitivity_Analysis.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -272,11 +272,13 @@ parTableVal =
 <pre class="codeoutput">1600 parameter sets submitted, 1311 obey parameter constraints.
  
 Starting parallel pool (parpool) using the 'Processes' profile ...
+Preserving jobs with IDs: 1 because they contain crash dump files.
+You can use 'delete(myCluster.Jobs)' to remove all jobs created with profile Processes. To create 'myCluster' use 'myCluster = parcluster('Processes')'.
 Connected to parallel pool with 4 workers.
  
-1311 simulations completed in 5667.4656 seconds.
+1311 simulations completed in 6492.3698 seconds.
  
-Of 1311 tests, 922 were valid.
+Of 1311 tests, 919 were valid.
 </pre>
 <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_05.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_06.png" alt=""> <img vspace="5" hspace="5" src="suspOpt_Sensitivity_Analysis_07.png" alt=""> <h2 id="7">Extract Performance Metrics</h2>
 <p>For all runs, performance metrics are calculated.</p>
@@ -328,8 +330,8 @@ ans =
     {'HP_A2_UA_Outz'}    {'Vehicle.Chassis.SuspA2.Linkage.UpperWishbone.sOutboard.Value'}      3      true       0.4      0.5      0.45 
 
 </pre>
-<p class="footer">Copyright 2023-2024 The MathWorks, Inc.<br>
-<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<p class="footer">Copyright 2023-2025 The MathWorks, Inc.<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2025a</a>
 <br>
 </p>
 </div>
@@ -352,7 +354,7 @@ ans =
 %
 % (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
 %
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 %% Open Vehicle Model
 %
@@ -464,6 +466,8 @@ end
 % warnings or errors have occurred during any of the tests and see how long
 % each run has taken.
 
+close(gcf)
+close(h2_sm_car)
 [runTableSense_OUT,simOutSense] = runSimulations(mdl,Vehicle,parTableVal,runTableSense);
 
 %% Extract Performance Metrics

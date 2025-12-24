@@ -1,6 +1,6 @@
 % Script to set up main model
 
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 mdl = 'sm_car_dlc_only';
 open_system(mdl);

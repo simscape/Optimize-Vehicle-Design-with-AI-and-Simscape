@@ -11,7 +11,7 @@ function parTableVal_trim = suspOpt_sweep_param_limits_checkVariance(parTableVal
 %       parTableVal     Table of suspension parameters
 %       RangeSweepTable Table holding results of parameter sweep
 
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 % Find top 26 parameters as measured by their impact on the roll angle metric
 [~, sorted_rollPi] = sort(RangeSweepTable.DiffRoll,'descend');

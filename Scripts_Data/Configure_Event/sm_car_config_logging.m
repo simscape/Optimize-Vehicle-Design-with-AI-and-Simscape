@@ -3,7 +3,7 @@ function sm_car_config_logging(modelname,logType)
 %   sm_car_config_logging(modelname)
 %   This function configures the logging for the Simscape Vehicle Templates Model.
 %
-% Copyright 2018-2024 The MathWorks, Inc.
+% Copyright 2018-2025 The MathWorks, Inc.
 
 if(strcmp(logType,'Normal'))
     FullLog = 'on'; SweepLog = 'off';

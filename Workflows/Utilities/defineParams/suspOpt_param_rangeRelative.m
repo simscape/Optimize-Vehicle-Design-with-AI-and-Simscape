@@ -15,7 +15,7 @@ function parTableRel = suspOpt_param_rangeRelative
 %                    This is an offset from default for hardpoints
 %                    This is the actual value for scalar parameters
 
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 
 tblVariableNames = ["Label","Parameter","Index","Use","Min","Max"];

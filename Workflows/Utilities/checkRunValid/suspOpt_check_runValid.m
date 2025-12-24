@@ -14,7 +14,7 @@ function dataValidCheck  = suspOpt_check_runValid(runTable,out,Vehicle,showplot,
 %      showplot     Create plot
 %      saveRes      Save plots and data to folder
 
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 % Extract test data from Simulation Output
 simRes_checkValid  = suspOpt_check_runValid_getData(out);

@@ -65,6 +65,7 @@ for r_i=1:numFRTests
     simInputFR(r_i) = setVariable(simInputFR(r_i),'Vehicle',Vehicle);
     simInputFR(r_i).UserString = UserString_SimInput;
     simInputFR(r_i) = setModelParameter(simInputFR(r_i),SimMechanicsOpenEditorOnUpdate="off");
+    simInputFR(r_i) = simInputFR(r_i).setModelParameter('initFcn','');
     simInputFR(r_i) = setModelParameter(simInputFR(r_i),SimscapeLogType="None");
 end
 
@@ -74,6 +75,10 @@ timerValFR = tic;
 clear simOutFR
 
 % Run with with FastRestart ON, parallel ON
+curr_proj = simulinkproject;
+p = parpool;
+p.addAttachedFiles(which('Custom_lib.slx'));
+p.addAttachedFiles(curr_proj.RootFolder + "\Libraries\Vehicle\Tire\Data_TIR")
 
 if(length(simInputFR)>12)
 simOutFR = parsim(simInputFR,'ShowSimulationManager','on',...

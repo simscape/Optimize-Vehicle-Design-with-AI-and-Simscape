@@ -9,7 +9,7 @@ function fig_h = suspOpt_check_runValid_plot_aToe(checkData,plotType)
 %
 %    fig_h         Handle to created figure
 
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 
 % Figure name

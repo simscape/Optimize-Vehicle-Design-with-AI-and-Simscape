@@ -10,7 +10,7 @@ function checkData = suspOpt_check_runValid_aToe(logsout_VehBus)
 %   checkData        Structure containing simulation results used to assess validity
 %                    and results of validity check for each run
 
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 % Thresholds for validity
 toe_thresh = 0.1; % radians

@@ -21,7 +21,7 @@
 %
 % (<matlab:web('Vehicle_Design_Opt_with_AI_Overview.html') return to Optimizing Vehicle Design Using AI and Simscape Overview>)
 %
-% Copyright 2023-2024 The MathWorks, Inc.
+% Copyright 2023-2025 The MathWorks, Inc.
 
 %% Open Vehicle Model
 %
@@ -76,6 +76,8 @@ parTableVal = suspOpt_param_rangeAbsolute(parTableRel);
 % 1. HP_A1_Ro_Inbz - HP_A1_Ro_Outz >= -0.05
 % 2. HP_A1_Ro_Inbz - HP_A1_Ro_Outz <=  0.04
 
+close(h2_sm_car)
+close(h5_sm_car)
 parTableVal
 
 %% Create Simulation Input Objects to Test Range Limits
@@ -119,6 +121,7 @@ for p_i = 2:2:numFRTests
     simInputFR(p_i-1) =       setVariable(simInputFR(p_i-1),'Vehicle',Vehicle);
     simInputFR(p_i-1) = setModelParameter(simInputFR(p_i-1),SimMechanicsOpenEditorOnUpdate="off");
     simInputFR(p_i-1) = setModelParameter(simInputFR(p_i-1),SimscapeLogType="None");
+    simInputFR(p_i-1) = simInputFR(p_i-1).setModelParameter('initFcn','');
     simInputFR(p_i-1).UserString = UserString_SimInput;
 
     % Take MAXIMUM value of parameter from current row in table 
@@ -133,6 +136,7 @@ for p_i = 2:2:numFRTests
     simInputFR(p_i) =       setVariable(simInputFR(p_i),'Vehicle',Vehicle);
     simInputFR(p_i) = setModelParameter(simInputFR(p_i),SimMechanicsOpenEditorOnUpdate="off");
     simInputFR(p_i) = setModelParameter(simInputFR(p_i),SimscapeLogType="None");
+    simInputFR(p_i) = simInputFR(p_i).setModelParameter('initFcn','');
     simInputFR(p_i).UserString = UserString_SimInput;
 end
 
@@ -154,6 +158,11 @@ timerValFR = tic;
 clear simOutFR
 
 % Run with with FastRestart ON, parallel ON
+curr_proj = simulinkproject;
+p = parpool;
+p.addAttachedFiles(which('Custom_lib.slx'));
+p.addAttachedFiles(curr_proj.RootFolder + "\Libraries\Vehicle\Tire\Data_TIR")
+
 simOutFR = parsim(simInputFR,'ShowSimulationManager','on', ...
     'UseFastRestart','on','ShowProgress','off', ...
     'TransferBaseWorkspaceVariables','on');
