@@ -17,7 +17,7 @@ function [roll_metric, ride_metric] = suspOpt_plot_Response_Surf(varLabelX,varLa
 %   The axis handle is an optional input so that this code can plot the results on
 %   axes within an App or a standalone figure.
 
-% Copyright 2024-2025 The MathWorks, Inc.
+% Copyright 2024-2026 The MathWorks, Inc.
 
 if(nargin==7)
     % Create plot on supplied axis handle

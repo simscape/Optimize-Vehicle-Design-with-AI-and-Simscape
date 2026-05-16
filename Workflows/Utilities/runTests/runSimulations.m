@@ -76,6 +76,7 @@ clear simOutFR
 
 % Run with with FastRestart ON, parallel ON
 curr_proj = simulinkproject;
+delete(gcp("nocreate"))
 p = parpool;
 p.addAttachedFiles(which('Custom_lib.slx'));
 p.addAttachedFiles(curr_proj.RootFolder + "\Libraries\Vehicle\Tire\Data_TIR")

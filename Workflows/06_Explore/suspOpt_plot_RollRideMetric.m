@@ -14,7 +14,7 @@ function suspOpt_plot_RollRideMetric(perfData,perfMetrics,ah_roll,ah_ride)
 %   The axis handles are required so that this code can plot the results on
 %   axes within an App or a standalone figure.
 
-% Copyright 2024-2025 The MathWorks, Inc.
+% Copyright 2024-2026 The MathWorks, Inc.
 
 cla(ah_roll);
 cla(ah_ride);

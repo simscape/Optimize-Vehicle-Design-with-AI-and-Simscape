@@ -9,7 +9,7 @@ function suspOpt_Train_Models_plotMRMR(dataTable,responseVars)
 %     dataTable    Table with design parameter values and resulting metrics
 %     responseVars Names of performance metrics.
 
-% Copyright 2024-2025 The MathWorks, Inc.
+% Copyright 2024-2026 The MathWorks, Inc.
 
 % If figure handle does not exist, create it
 fig_handle_name =   'h1_sm_car_train_models_mrmr';
